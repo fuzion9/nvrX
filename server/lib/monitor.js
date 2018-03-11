@@ -135,7 +135,7 @@ function ffProbe(monitor, next){
 
 function doprobe(monitor, next){
     log.info('Probing: ' + monitor._id);
-    let fullProbeCommand = db.dbConfig.ff.toolsPath + '\\' + db.dbConfig.ff.probeCommand + ' ' + db.dbConfig.ff.probeFull + ' ' + monitor.calculatedStreamPath;
+    let fullProbeCommand = path.resolve(db.dbConfig.ff.toolsPath, db.dbConfig.ff.probeCommand) + ' ' + db.dbConfig.ff.probeFull + ' ' + monitor.calculatedStreamPath;
     log.info(fullProbeCommand);
     try {
         monitor.ffProbe = JSON.parse(execSync(fullProbeCommand).toString());

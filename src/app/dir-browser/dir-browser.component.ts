@@ -3,7 +3,7 @@ import {BsModalService} from "ngx-bootstrap/modal";
 import {BsModalRef} from "ngx-bootstrap/modal/bs-modal-ref.service";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../auth.service";
-
+//TODO: Not quite working on linux, doesn't find subfolders and adds an extra slash in selected path
 @Component({
     selector: 'app-dir-browser',
     templateUrl: './dir-browser.component.html',
