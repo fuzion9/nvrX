@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="col-sm-11" style="padding: 10px; border-left: 1px solid #000;">
-                <div  class="row" dnd-sortable-container [sortableData]="monitorsDisplayed"
+                <div style="min-height: 200px" class="row" dnd-sortable-container [sortableData]="monitorsDisplayed"
                      [dropZones]="['cams']">
                     <div id='draggableMonitor' class="col-sm-{{dbConfig.monitorsPerRow}}" *ngFor="let m of monitorsDisplayed; let x=index" dnd-sortable
                          [sortableIndex]="x"
