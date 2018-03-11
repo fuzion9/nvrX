@@ -1,0 +1,15 @@
+.modal-body {
+    background-color: #FFF;
+    color:#000;
+}
+
+.modal-header{
+    background-color: #EEE;
+    color:#000;
+}
+
+.modal-footer{
+    background-color: #EEE;
+    color:#000;
+    padding: 2px;
+}

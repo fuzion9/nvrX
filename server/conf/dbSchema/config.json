@@ -1,0 +1,120 @@
+{
+    "jwtConfig" : {
+        "expiryTime" : 6400,
+        "JWT_SECRET" : "Supercalafragalisticexpialadocious"
+    },
+    "serverPort" : "3000",
+    "storageLocations" : [
+        {
+            "name" : "Main Storage",
+            "path" : "c:\\tmp"
+        },
+        {
+            "name" : "RAM Disk",
+            "path" : "r:\\tmp"
+        }
+    ],
+    "ff" : {
+        "toolsPath" : "c:\\ffmpeg\\bin",
+        "probeCommand" : "ffprobe",
+        "probeFull" : "-v quiet -print_format json -show_format -show_streams",
+        "probeMin" : "-v quiet -print_format json -show_format",
+        "vidProbeCommand" : "ffprobe -v quiet -print_format json -show_format",
+        "ffmpegCommand" : "ffmpeg",
+        "runMonitorsDetached" : true,
+        "availableHWAccels" : [
+            "cuda",
+            "dxva2",
+            "qsv",
+            "d3d11va",
+            "qsv",
+            "cuvid"
+        ],
+        "input" : {
+            "hide_banner" : "",
+            "loglevel" : "warning",
+            "re" : "",
+            "rtsp_transport" : "tcp",
+            "hwaccel" : "cuda"
+        },
+        "output" : {
+            "vcodec" : "copy",
+            "an" : "",
+            "r" : 15,
+            "f" : "segment",
+            "segment_list" : "pipe:1",
+            "segment_atclocktime" : "1",
+            "reset_timestamps" : "1",
+            "strftime" : "1",
+            "segment_time" : 900
+        },
+        "stillImage" : {
+            "c:v" : "mjpeg",
+            "f" : "image2",
+            "q:v" : "5",
+            "vf" : "fps=2",
+            "update" : "1",
+            "r" : "2"
+        },
+        "liveOutputStream" : {
+            "f" : "mpegts",
+            "c:v" : "mpeg1video",
+            "r" : "30",
+            "an" : ""
+        },
+        "liveOutputMP4" : {
+            "vcodec" : "copy",
+            "f" : "mp4",
+            "reset_timestamps" : "1",
+            "movflags" : "frag_keyframe+empty_moov",
+            "" : "pipe:1"
+        }
+    },
+    "availableCodecs" : [
+        "copy"
+    ],
+    "availableFrameRates" : [
+        1,
+        5,
+        10,
+        15,
+        20,
+        25,
+        30
+    ],
+    "availableVideoLengths" : [
+        {
+            "name" : "15 Seconds (Testing Purposes Only)",
+            "value" : 15
+        },
+        {
+            "name" : "30 Seconds (Testing Purposes Only)",
+            "value" : 30
+        },
+        {
+            "name" : "1 Minute (Testing Purposes Only)",
+            "value" : 60
+        },
+        {
+            "name" : "5 Minutes",
+            "value" : 300
+        },
+        {
+            "name" : "10 Minutes",
+            "value" : 600
+        },
+        {
+            "name" : "15 Minutes",
+            "value" : 900
+        },
+        {
+            "name" : "30 Minutes",
+            "value" : 1800
+        },
+        {
+            "name" : "1 Hour",
+            "value" : 3600
+        }
+    ],
+    "monitorsPerRow" : 4
+}

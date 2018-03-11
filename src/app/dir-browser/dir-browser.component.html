@@ -1,0 +1,48 @@
+<ng-template #content>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <!--<i class="fa fa-camera"></i>-->
+            <span>Select a folder...</span></h4>
+        <button type="button" class="close" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row" style="padding-bottom: 2px">
+            <div class="col-sm-8">
+                <i class="fa fa-level-up" (click)="getDirData(currDir, true)" style="margin-right: 10px;"
+                   *ngIf="currDir.length > 1"></i>
+                <span>{{currDirDisplay()}}</span>
+            </div>
+            <div class="col-sm-2">
+                <span>Drive:</span>
+            </div>
+            <div class="col-sm-2">
+                <select class="form-control form-control-sm" [(ngModel)]="windowsDriveLetter" (change)="changeDir(windowsDriveLetter)">
+                    <option *ngFor="let d of availWindowsDrives">{{d}}</option>
+                </select>
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="max-height: 450px; overflow: auto; border-top: 1px solid #999">
+                    <ul>
+                        <li *ngFor="let dir of currDirContents">
+                            <span (click)="getDirData(dir, false)">{{dir}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark btn-success" (click)="selectDir()">Select</button>
+        <button type="button" class="btn btn-outline-dark btn-danger" (click)="modalRef.hide()">Cancel</button>
+    </div>
+</ng-template>
+<button type="button" class="btn btn-sm btn-dark">
+<i class="fa fa-file" (click)="open(content)" tooltip="Select a Folder" placement="bottom"></i>
+</button>
