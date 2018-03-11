@@ -53,7 +53,13 @@ db.connect(conf.dbConfig.url, ()=> {
 
 
     ['SIGINT', 'SIGTERM', 'SIGQUIT', 'SIGKILL', 'SIGABRT', 'SIGTERM']
-        .forEach(signal => process.on(signal, shutdown));
+        .forEach(signal =>{
+            try {
+                process.on(signal, shutdown);
+            } catch(e) {
+                log.info (signal + ' is not an available signal');
+            }
+        });
 
     function shutdown() {
         console.log('Shutting Down as Gracefully as possible...');
