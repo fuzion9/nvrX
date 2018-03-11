@@ -2,6 +2,7 @@ import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {BsModalService} from "ngx-bootstrap/modal";
 import {BsModalRef} from "ngx-bootstrap/modal/bs-modal-ref.service";
 import {HttpClient} from "@angular/common/http";
+import {AuthService} from "../auth.service";
 
 @Component({
     selector: 'app-dir-browser',
@@ -16,8 +17,10 @@ export class DirBrowserComponent implements OnInit {
     windowsDriveLetter:any = "C:";
     availWindowsDrives= [];
     os:any;
+    auth:AuthService;
 
-    constructor(private modalService: BsModalService, private http: HttpClient) {
+    constructor(private modalService: BsModalService, private http: HttpClient, private a:AuthService) {
+        this.auth = a;
     }
 
     ngOnInit() {
@@ -59,7 +62,7 @@ export class DirBrowserComponent implements OnInit {
                 this.currDir.push(folder);
             }
         }
-        this.http.post<any>('/api/v1/fbrowse', {folder: this.currDir}).subscribe(data => {
+        this.http.post<any>('/api/v1/fbrowse', {folder: this.currDir}, this.auth.httpOptions).subscribe(data => {
             this.currDir = data.dir;
             this.currDirContents = data.contents;
             this.availWindowsDrives = data.drives;
