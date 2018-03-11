@@ -4,6 +4,7 @@ let log = require('../lib/logger');
 let execSync = require('child_process').execSync;
 let monitors = require('../lib/monitor');
 let runner = require('../lib/monitorRunner');
+let fs = require('fs');
 
 let self = module.exports = {
     startup: () => {
@@ -16,8 +17,13 @@ let self = module.exports = {
         });
     },
     getAvailableHardwareAccellerators: () => {
-        let command = path.resolve(db.dbConfig.ff.toolsPath, 'ffmpeg -v quiet -hwaccels');
-        db.dbConfig.ff.availableHWAccels = execSync(command).toString().trim().replace(/\r/g, '').split('\n').splice(1);
-        db.dbConfigSave();
+        let toolsPath = path.resolve(db.dbConfig.ff.toolsPath, 'ffmpeg');
+        if (fs.existsSync(toolsPath) || fs.existsSync(toolsPath + '.exe')){
+            let command = path.resolve(db.dbConfig.ff.toolsPath, 'ffmpeg -v quiet -hwaccels');
+            db.dbConfig.ff.availableHWAccels = execSync(command).toString().trim().replace(/\r/g, '').split('\n').splice(1);
+            db.dbConfigSave();
+        } else {
+            log.debug('ffmpeg Tools not found at: ' + toolsPath);
+        }
     }
 };
