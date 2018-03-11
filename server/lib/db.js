@@ -116,8 +116,19 @@ let self = module.exports = {
     },
     readConfig: (next)=>{
         self.query('config', {}, (err, result)=>{
-            self.dbConfig = result[0];
-            next();
+            if (result.length < 1){
+                console.log('Config Not Found, Creating new config collection with default data');
+                state.db.collection('config').insertOne(require('../conf/dbSchema/config'), (err, result)=>{
+                    state.db.collection('users').insertOne(require('../conf/dbSchema/users'), (err, result)=>{
+                        setTimeout(()=>{
+                            self.readConfig(next);
+                        }, 2000);
+                    });
+                });
+            } else {
+                self.dbConfig = result[0];
+                next();
+            }
         });
     },
     connect: (url, next) => {

@@ -22,7 +22,6 @@ db.connect(conf.dbConfig.url, ()=> {
     /**
    * Get port from environment and store in Express.
    */
-
     let port = normalizePort(db.dbConfig.serverPort || '8080');
     app.set('port', port);
     global.port = app.get('port');
