@@ -1,0 +1,103 @@
+<ng-template #content>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <i class="fa fa-file-video-o"></i>
+            <span>Videos Recorded on {{monitor.alias}}</span>
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="playerContainer">
+                    <!-- VgPlayer -->
+                    <vg-player (onPlayerReady)="onPlayerReady($event)">
+                        <vg-buffering></vg-buffering>
+                        <div class="info-layer" *ngIf="motionDetected">Motion Detected</div>
+                        <vg-controls>
+                            <vg-play-pause></vg-play-pause>
+                            <vg-scrub-bar [vgSlider]="true" style="pointer-events:auto">
+                                <vg-scrub-bar-current-time [vgSlider]="true"></vg-scrub-bar-current-time>
+                                <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+                                <vg-scrub-bar-cue-points [vgCuePoints]="metadataTrack.cues"></vg-scrub-bar-cue-points>
+                            </vg-scrub-bar>
+                            <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+                            <vg-playback-button [playbackValues]="[ '1.0', '2.0', '4.0', '8.0' ]"></vg-playback-button>
+                            <vg-fullscreen></vg-fullscreen>
+                        </vg-controls>
+                        <video [vgMedia]="media" #media id="singleVideo" preload="auto" crossorigin>
+                            <source *ngFor="let video of sources" [src]="video.src" [type]="video.type">
+                            <track src="/streamIn/v1/vtt" kind="metadata" label="Cue Points" default
+                                   #metadataTrack
+                                   vgCuePoints
+                                   (onEnterCuePoint)="onEnterCuePoint($event)"
+                                   (onExitCuePoint)="onExitCuePoint($event)">
+                        </video>
+                    </vg-player>
+                    <!-- VgPlayer -->
+                </div>
+            </div>
+            <div class="col-sm-4 text-center" style="margin-lef:-25px">
+                <div>Showing Videos From</div>
+                <div style="font-size: 10px;">(click to change)</div>
+                <button style="width: 150px" class="btn btn-dark" [bsConfig]="{ dateInputFormat: 'MMM d, YYYY' }" bsDatepicker #dp="bsDatepicker" [(ngModel)]="currentDate" (bsValueChange)="changeDate($event)">{{currentDate | date}}</button>
+
+            <hr/>
+            <div *ngIf="seekTimes.length > 0">
+                    <div class="eventContainer">
+                        <div style="border-bottom: 1px solid #000; margin-bottom: 7px">Motion Events</div>
+                        <ul class="fa-ul eventList">
+                            <li *ngFor="let t of seekTimes; let i = index" (click)="seekTo(t.offset-1)">
+                                <i class="fa fa-li fa-play"></i>
+                                <span>{{t.eventTime | date : 'mediumTime'}}</span>
+                                <progressbar type="warning" class="progress-bar-animated active" [value]="t.confidence" style="margin:0; padding: 0;"></progressbar>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12" style="padding: 15px;">
+                <div *ngIf="!haveRowData" style="text-align:center;">
+                    <i class="fa fa-spinner fa-spin fa-5x"></i>
+                </div>
+                <div *ngIf="haveRowData && rows.length < 1" style="text-align:center; margin-top: 100px;">
+                    <span class="badge badge-light">No Videos found for this date.</span>
+                </div>
+                <p-table [value]="rows" sortField="startDate" sortOrder="-1" selectionMode="single" [(selection)]="selectedVideo" dataKey="_id" [paginator]="true" [rows]="10" *ngIf="haveRowData && rows.length > 0">
+                    <ng-template pTemplate="header">
+                        <tr class="tableHeader" [pSelectableRow]="r">
+                            <th>Filename</th>
+                            <th [pSortableColumn]="'eventCount'" width="70px">Events</th>
+                            <th [pSortableColumn]="'startDate'" width="90px">Time</th>
+                            <th width="70px">Length</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-r>
+                        <tr class="tableCell" (click)="play(r)" [pSelectableRow]="r">
+
+                            <td>
+                                <i class="fa fa-play-circle-o" style="margin-right: 10px; color: #c69500"></i>
+                                {{shorten(r.filename)}} ({{r.meta.size}})
+                            </td>
+                            <td>{{r.eventCount}}</td>
+                            <td>{{r.startDate | date:'mediumTime'}}</td>
+                            <td>{{r.meta.length}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark btn-danger" (click)="modalRef.hide()">Close</button>
+    </div>
+</ng-template>
+<button (click)="open(content)" class="btn btn-sm btn-dark" style="font-size: 14px" tooltip="Review Videos and Events">
+<i class="fa fa-file-video-o"></i>
+</button>

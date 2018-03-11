@@ -1,0 +1,66 @@
+<ng-template #content>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            <i class="fa fa-camera"></i>
+            <span>{{monitorDetails.alias}} Motion Detection Region Configuration</span></h4>
+        <button type="button" class="close" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div style="text-align: center;" (click)="updateCoords()">
+            <form style="padding: 0; margin: 0;">
+                    <div class="row" style="margin-top: -18px">
+                        <div class="form-group input-group-sm col-sm-3" style="margin: 0; padding: 5px">
+                            <label for="normalization">Normalization Multiplier</label>
+                            <input type="text" class="form-control" id="normalization" name="normalization" (change)="updateCoords()"
+                                    placement="bottom" ngbTooltip="This is calculated automatically each time the selected region is changed.  Used to artificially increase the motion detected, for use in larger regions. (1-10)  Recommended 10 for full image, 5 for half image etc.."/>
+                        </div>
+
+                        <div class="form-group input-group-sm col-sm-3" style="margin: 0; padding: 5px">
+                            <label for="threshold">Pixel Threshold</label>
+                            <input type="text" class="form-control" id="threshold" name="threshold" (change)="updateCoords()"
+                                   placement="bottom" ngbTooltip="The luminosity required for a pixel change to count as motion. The lower the value, the more sensitive to small movements the detector is. (1-255, recommended: 12-18)"/>
+                        </div>
+
+                        <div class="form-group input-group-sm col-sm-3" style="margin: 0; padding: 5px">
+                            <label for="evt">Motion %</label>
+                            <input type="text" class="form-control" id="evt" name="evt" (change)="updateCoords()"
+                                 placement="bottom" ngbTooltip="The percentage of motion required to record a 'Motion Event'. (1-100) Recommended: 25"/>
+                        </div>
+
+                        <div class="form-group input-group-sm col-sm-3" style="margin: 0; padding: 5px">
+                            <label for="delay">Delay (seconds)</label>
+                            <input type="text" class="form-control" id="delay" name="delay" (change)="updateCoords()"
+                                   placement="bottom" ngbTooltip="After detecting a motion event, how many seconds to wait before recording another event.  This is used to keep the detected events down to a sensible amount especially when displayed on the scrub bar."/>
+                        </div>
+
+
+                    </div>
+
+
+                <div class="row" style="margin-top: -18px; padding: 0">
+                    <div class="col-sm-12" style="text-align: center; margin: 0; padding: 0">
+                        <input type="text" id="p" name="p" (change)="updateCoords()" [hidden]="true" />
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div  style="margin-right: 200px">Selected Pixel Count: {{this.monitorDetails.config.motionConfig.motionAreaPixelCount}}</div>
+        <button type="button" class="btn btn-outline-dark btn-danger" (click)="calculateCoverageArea()">CalcArea</button>
+        <button type="button" class="btn btn-outline-dark btn-success" (click)="saveCoords()">Save</button>
+        <button type="button" class="btn btn-outline-dark btn-danger" (click)="modalRef.hide()">Cancel</button>
+    </div>
+    <script>
+        alert('test')
+        jQuery('#p').canvasAreaDraw({imageUrl: this.snapshotUrl});
+    </script>
+</ng-template>
+<button (click)="open(content)" class="btn btn-sm btn-dark" style="font-size: 14px" tooltip="Adjust Motion Detection Settings">
+<i class="fa fa-area-chart" ></i>
+</button>

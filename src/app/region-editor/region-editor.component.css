@@ -1,0 +1,7 @@
+.helpFont{
+    font-size:10px;
+}
+
+.modal {
+    display: block !important; /* I added this to see the modal, you don't need this */
+}

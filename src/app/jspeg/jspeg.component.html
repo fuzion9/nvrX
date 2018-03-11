@@ -1,0 +1,97 @@
+<div *ngIf="!monitorDetails.isDisplayed;">
+    <div class="badge  badge-dark" style="text-align: left; margin-top:20px; width:100%">
+        <div>
+            <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='disabled'"><i
+                class="fa fa-ban" style="color:red"></i></span>
+            <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='record'"><i
+                class="fa fa-circle fa-blink" style="color:red"></i></span>
+            <span *ngIf="monitorDetails.config.mode=='watch'" class="badge badge-pill badge-light"><i class="fa fa-eye"
+                                                                                                      style="color:green"></i></span>
+            <app-monitor-settings [monitorDetails]="monitorDetails"></app-monitor-settings>
+
+            <app-region-editor [(monitorDetails)]="monitorDetails" (doSave)="doSaveNoRestart($event)"
+                               *ngIf="monitorDetails.config.motionConfig.enableMotionDetection"></app-region-editor>
+
+        </div>
+        <span style="font-size:14px;">{{monitorDetails.alias}}</span>
+    </div>
+</div>
+<div *ngIf="monitorDetails.isDisplayed;">
+    <div class="card text-white bg-dark mb-3 liveCard" >
+        <div class="card-header" style="padding: 2px; padding-left: 10px;  vertical-align: middle; height: 55px;">
+            <div class="float-md-right" style="font-size: 14px; text-align: right"
+                 *ngIf="isPlaying && monitorDetails.config.mode !== 'disabled' && monitorDetails.config.motionConfig.enableMotionDetection">
+                <div>
+                    Motion Frames:
+                    <bSwitch [switch-size]="'mini'" [(ngModel)]="monitorDetails.config.motionConfig.drawDiffBox"
+                             (onChangeState)="configChange()"></bSwitch>
+                </div>
+                <div>
+                    Motion Level:
+                    <bSwitch [switch-size]="'mini'" [(ngModel)]="monitorDetails.config.motionConfig.showMotionLevel"
+                             (onChangeState)="configChange()"></bSwitch>
+                </div>
+            </div>
+            <span>
+
+                <div style="font-size:18px; margin-top:-5px">{{monitorDetails.alias}}</div>
+                <i class="fa fa-plug" style="color:grey" *ngIf="!isRunning"></i>
+                <span *ngIf="isRunning">
+                    <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='disabled'"><i
+                        class="fa fa-ban" style="color:red"></i></span>
+                    <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='record'"><i
+                        class="fa fa-circle fa-blink" style="color:red"></i></span>
+                    <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='watch'"><i
+                        class="fa fa-eye" style="color:green"></i></span>
+                </span>
+                <span style="margin-top: -6px;">
+                    <app-monitor-settings [monitorDetails]="monitorDetails"></app-monitor-settings>
+
+                    <app-region-editor [(monitorDetails)]="monitorDetails" (doSave)="doSaveNoRestart($event)"
+                                       *ngIf="monitorDetails.config.motionConfig.enableMotionDetection"></app-region-editor>
+
+                    <app-video-player [monitor]="monitorDetails"></app-video-player>
+                </span>
+            </span>
+        </div>
+
+
+        <div class="card-block liveCardBlock">
+              <span class="row liveCardHeader">
+                <span class="col-6">
+                    <span
+                        [hidden]="monitorDetails.config.mode ==='disabled' || !monitorDetails.config.motionConfig.enableMotionDetection || !monitorDetails.config.motionConfig.drawDiffBox">
+                      <img id="diffImage_{{monitorId}}" class="diffImage" src="/streamIn/diffImage/{{monitorId}}"/>
+                        <div style="background-color: #FFF; width: 156px" *ngIf="debug">
+                            <div>Raw Value: {{rawConfidence}}</div>
+                            <div>Normalized: {{confidence}}</div>
+                            <div>Normalizer: {{normalizer}}</div>
+                            <div>Threshold: {{threshold}}</div>
+                            <div>PixelArea: {{pixelArea}}</div>
+                        </div>
+                    </span>
+                </span>
+              </span>
+            <div class="row"  *ngIf="stateChanging && monitorDetails.config.mode != 'disabled'">
+                <div class="stateChangingRow">
+                    <i class="fa fa-5x fa-spinner fa-spin"></i>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <canvas id="canvas_{{monitorId}}" class="liveCanvas-{{colSize}}" *ngIf="monitorDetails.config.mode != 'disabled'"></canvas>
+        <!-- Canvas -->
+
+        <!-- Monitor Disabled -->
+        <div *ngIf="monitorDetails.config.mode === 'disabled'" class="disabledCamera">Camera is disabled</div>
+        <!-- Monitor Disabled -->
+
+        <div class="card-footer" style="padding: 0"
+             [hidden]="(!monitorDetails.config.motionConfig.showMotionLevel || !monitorDetails.config.motionConfig.enableMotionDetection || monitorDetails.config.mode=='disabled')">
+            <progressbar type="warning" class="progress-bar-animated active" [value]="confidence"
+                         style="margin:0; padding: 0;"></progressbar>
+        </div>
+    </div>
+</div>

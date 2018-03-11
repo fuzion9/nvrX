@@ -1,0 +1,3 @@
+{
+  "mongoConnectionString":"mongodb://cortex:5198/nvrX"
+}

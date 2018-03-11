@@ -1,0 +1,41 @@
+body{
+    background-color: #000 !important;
+}
+.progress {height: 5px !important; border-radius: 0 !important;}
+.progress .sr-only { position: relative; }
+@keyframes fa-blink {
+  0% { opacity: 0; }
+  25% { opacity: 0.25; }
+  50% { opacity: 1; }
+  75% { opacity: 0.25; }
+  100% { opacity: 0; }
+}
+.fa-blink {
+  -webkit-animation: fa-blink .75s linear infinite;
+  -moz-animation: fa-blink .75s linear infinite;
+  -ms-animation: fa-blink .75s linear infinite;
+  -o-animation: fa-blink .75s linear infinite;
+  animation: fa-blink 1.0s linear infinite;
+}
+
+.modal-body {
+    background-color: #222;
+    color:#FFF;
+}
+
+.modal-header{
+    background-color: #555;
+    color:#FFF;
+}
+
+.modal-footer{
+    background-color: #555;
+    color:#FFF;
+    padding: 2px;
+}
+
+.modal-content {
+    overflow:hidden;
+    background-color: #0480be;
+}
+

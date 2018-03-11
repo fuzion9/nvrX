@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="ycanvas1" width="704" height="480"></canvas>
+</body>
+</html>
+<script>
+    var canvas = document.getElementById("ycanvas1");
+    canvas.style.background="black";
+    var ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.moveTo(33,31);
+    //ctx.moveTo(347, 64);
+    ctx.lineTo(305,31);
+    ctx.lineTo(137, 465);
+    //ctx.lineTo(33, 31);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.clip();
+    ctx.fillStyle = '#f00';
+    ctx.fill();
+    var img = new Image();
+    img.src = "photo.jpeg";
+    img.onload = function () {
+        //ctx.drawImage(img, 100, 100, 150, 110, 0, 0, 300, 220);
+    }
+
+</script>

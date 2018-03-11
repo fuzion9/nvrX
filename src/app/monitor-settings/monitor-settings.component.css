@@ -1,0 +1,14 @@
+.helpFont{
+    font-size:10px;
+}
+
+
+/* Important part */
+.modal-dialog {
+    overflow-y: initial !important
+}
+
+.modal-body {
+    height: 600px;
+    overflow-y: auto;
+}

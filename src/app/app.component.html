@@ -1,0 +1,83 @@
+<div *ngIf="!auth.user.jwt">
+    <app-login></app-login>
+</div>
+<div *ngIf="auth.user.jwt">"
+    <div class="container-fluid mainContainer" style="width: 99%">
+
+        <!-- Nav Bar -->
+        <nav class="navbar navbar-fixed-top navbar-inverse navbar-toggleable-md">
+
+            <div class="navBrand">
+                <span class="navbar-text" style="margin-right: 5px;"><i class="fa fa-camera"></i> </span>
+                <a class="navbar-brand" href="">nvrX v0.1</a>
+            </div>
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item">
+                    <a tooltip="2 Cameras per row" class="nav-link navLinkC" (click)="setColumns(2)">
+                        <span class="btn btn-dark" style="font-size: 12px; padding: 2px; margin: 0;  height: 25px">
+                            <i class="fa fa-tv"></i>
+                            <i class="fa fa-tv"></i>
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a tooltip="3 Cameras per row" class="nav-link navLinkC" (click)="setColumns(3)">
+                        <span class="btn btn-dark" style="font-size: 10px; padding: 4px; margin: 0; height: 25px">
+                            <i class="fa fa-tv"></i>
+                            <i class="fa fa-tv"></i>
+                            <i class="fa fa-tv"></i>
+                        </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a tooltip="4 Cameras per row" class="nav-link navLinkC" (click)="setColumns(4)">
+                        <span class="btn btn-dark" style="font-size: 7px; padding: 6px; margin: 0; height: 25px">
+                            <i class="fa fa-tv"></i>
+                            <i class="fa fa-tv"></i>
+                            <i class="fa fa-tv"></i>
+                            <i class="fa fa-tv"></i>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item navLinkC"><a class="nav-link">
+                    <app-system-config></app-system-config>
+                </a></li>
+                <li class="nav-item navLinkC"><a class="nav-link">
+                    <app-monitor-settings launcherStyle="add"></app-monitor-settings>
+                </a></li>
+                <li class="nav-item navLinkC"><a class="nav-link" (click)="auth.doLogout()">{{auth.user.username}}</a></li>
+            </ul>
+
+        </nav>
+
+        <!-- Nav Bar -->
+
+        <div class="row" style="border-top:1px solid #000">
+            <div class="col-sm-1">
+                <div style="padding-top:10px; margin-bottom: 30px;">Cameras</div>
+                <div style="height:100%" dnd-sortable-container [sortableData]="monitorsAvailable"
+                     [dropZones]="['cams']">
+                    <ul style="list-style-type: none; margin: 0; padding: 0;">
+                        <li *ngFor="let ma of monitorsAvailable; let i=index" dnd-sortable [sortableIndex]="i"
+                            [dragData]="ma" (onDropSuccess)="deActivate($event)">
+                            <app-jspeg id="{{i}}" [monitorId]="ma"></app-jspeg>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-11" style="padding: 10px; border-left: 1px solid #000;">
+                <div  class="row" dnd-sortable-container [sortableData]="monitorsDisplayed"
+                     [dropZones]="['cams']">
+                    <div id='draggableMonitor' class="col-sm-{{dbConfig.monitorsPerRow}}" *ngFor="let m of monitorsDisplayed; let x=index" dnd-sortable
+                         [sortableIndex]="x"
+                         [dragData]="m" (onDropSuccess)="activate($event)">
+                        <app-jspeg id="{{x}}" [colSize]="dbConfig.monitorsPerRow" [monitorId]="m"></app-jspeg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

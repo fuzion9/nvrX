@@ -1,0 +1,52 @@
+.liveCard{
+    margin: 2px;
+}
+
+.liveCardHeader{
+
+}
+
+
+.liveCardBlock{
+    padding: 0;
+    margin: 0;
+    background-color: #000
+}
+
+.diffImage{
+    height:106px;
+    width:156px;
+    position: absolute;
+}
+/* 4 Column Grid - Each Column is 3 Wide */
+.liveCanvas-4{
+    display:block;
+    height: 313px;
+    width: 469px;
+}
+
+/* 3 Column Grid - Each Column is 4 Wide */
+.liveCanvas-3{
+    display:block;
+    height: 213px;
+    width: 320px;
+}
+
+.liveCanvas-2{
+    display:block;
+    height: 480px;
+    width: 720px;
+}
+
+.stateChangingRow{
+    width: 100%;
+    padding-top: 20%;
+    text-align: center;
+    position: absolute;
+}
+
+.disabledCamera{
+    width:100%;
+    padding-top: 25%;
+    text-align: center;
+}
