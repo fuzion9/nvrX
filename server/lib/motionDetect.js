@@ -68,7 +68,7 @@ let self = module.exports = {
                                 //console.log('Writing Image to disk');
                                 fs.writeFile(m.motionConfig.calculatedSnapShotLocation + '.diff.jpg', new Buffer(jpeg, 'base64'), (err) => {
                                     //console.log('Done Image to disk');
-                                    if (err) log.error(err);
+                                    if (err) log.error('Error writing JPEG file' + err);
                                     monitors[m.id].ctx.globalCompositeOperation = 'source-over';
                                     filterRegion(m.motionConfig.motionArea, monitors[m.id].ctx);
                                     monitors[m.id].ctx.drawImage(img, 0, 0, img.width, img.height);
@@ -87,6 +87,9 @@ let self = module.exports = {
                             next({});
                         }
                     });
+                },(err)=>{
+                    log.error('Failed to load image: ' + err);
+                    next({});
                 });
             } else {
                 next({
