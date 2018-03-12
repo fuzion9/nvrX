@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 process.on('unhandledRejection', (reason, p) => {
-    console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
+    console.log('Unhandled Rejection at: Promise ', p, ' reason: ', reason);
 });
 
 process.on('uncaughtException', function (exception) {
+    console.log('Uncaught Exception:');
     console.log(exception);
 });
 

@@ -335,9 +335,9 @@ function processAnnoyingffmpegOutput(err, id, alias){
         runningMonitors[id].currentFile = err;
         db.saveVideoMeta(vids, ()=>{});
     } else if (err.indexOf('Error') > -1) {
-        log.error(err);
+        log.error('FFMpeg Error: ' + err);
     } else if (err.indexOf('Failed') > -1) {
-        log.error(err);
+        log.error('FFMpeg Fail: ' +err);
     } else {
         //log.error(err);
     }
