@@ -53,7 +53,7 @@ let self = module.exports = {
     startAllMonitors: (monitors, next)=>{
         log.info('Found ' + monitors.length + ' monitors to start');
         async.eachSeries(monitors, (monitor, cb) => {
-            log.info('Starting ' + monitor.alias);
+            //log.info('Starting ' + monitor.alias);
             self.startMonitor(monitor, () => {
                 cb();
             });
@@ -112,54 +112,47 @@ let self = module.exports = {
 };
 
 
-function doDetection(runningMonitor, lastSnapShotModTime, lastEventTime, next){
+function doDetection(runningMonitor, next){
     let snapshot = runningMonitor.config.motionConfig.calculatedSnapShotLocation;
-    fs.exists(snapshot, (exists)=>{
-        if (exists) {
-            fs.stat(snapshot, (err, stats) => {
-                if (err) {
-                    log.error('Could not read stats of snapshot: ' + snapshot);
-                    next(lastSnapShotModTime, lastEventTime);
-                } else {
-                    let thisSSmTime = new Date(stats.mtime);
-                    if (thisSSmTime.getTime() > lastSnapShotModTime.getTime() && stats.size > 10) {
-
-                        lastSnapShotModTime = new Date(stats.mtime);
-                        let detectorPayload = {
-                            id: runningMonitor.id,
-                            alias: runningMonitor.alias,
-                            motionConfig: runningMonitor.config.motionConfig
-                        };
-                        motionDetect.detect(detectorPayload, (confidence) => {
-                            runningMonitor.isBusy = false;
-                            runningMonitor.motionConfidence = confidence;
-                            runningMonitor.config.motionConfig.newCanvas = false;
-                            let now = new Date();
-                            let diff = (now.getTime() - lastEventTime.getTime()) / 1000;
-                            if (confidence.normalized >= runningMonitor.config.motionConfig.eventDetectionMin && diff > runningMonitor.config.motionConfig.motionDelay && runningMonitor.config.mode === 'record') {
-                                lastEventTime = new Date();
-                                log.info('\x1B[90mRecording Event on '+runningMonitor.alias+' due to motion detection event with confidence: ' + confidence.normalized + '\x1B[39m');
-                                db.saveEvent({
-                                    monitorId: runningMonitor.id.toString(),
-                                    date: new Date(),
-                                    type: 'motionEvent',
-                                    data: confidence
-                                }, () => {});
-                            }
-                            next(lastSnapShotModTime, lastEventTime);
-
-                        });
-                    } else {
-                        next(lastSnapShotModTime, lastEventTime);
-                    }
-                }
-            });
-        } else {
+    fs.stat(snapshot, (err, stats) => {
+        if (err) {
             log.info('\x1B[34mSnapshot Does Not Exist (Waiting for 3 seconds and checking again): \x1B[39m' + runningMonitor.config.motionConfig.calculatedSnapShotLocation);
             setTimeout(()=>{
-                next(lastSnapShotModTime, lastEventTime);
+                next();
             }, 3000);
-
+        } else {
+            let thisSSmTime = new Date(stats.mtime);
+            //console.log('\nLast Time: ' + runningMonitor.lastSnapShotModTime + ' / ' + runningMonitor.lastSnapShotModTime.getTime());
+            //console.log('This Time: ' + thisSSmTime + ' / ' + thisSSmTime.getTime());
+            if (thisSSmTime.getTime() > runningMonitor.lastSnapShotModTime.getTime() && stats.size > 10) {
+                //console.log('Detecting...');
+                runningMonitor.lastSnapShotModTime = new Date(stats.mtime);
+                let detectorPayload = {
+                    id: runningMonitor.id,
+                    alias: runningMonitor.alias,
+                    motionConfig: runningMonitor.config.motionConfig
+                };
+                motionDetect.detect(detectorPayload, (confidence) => {
+                    runningMonitor.isBusy = false;
+                    runningMonitor.motionConfidence = confidence;
+                    runningMonitor.config.motionConfig.newCanvas = false;
+                    let now = new Date();
+                    let diff = (now.getTime() - runningMonitor.lastEventTime.getTime()) / 1000;
+                    if (confidence.normalized >= runningMonitor.config.motionConfig.eventDetectionMin && diff > runningMonitor.config.motionConfig.motionDelay && runningMonitor.config.mode === 'record') {
+                        runningMonitor.lastEventTime = new Date();
+                        log.info('\x1B[90mRecording Event on '+runningMonitor.alias+' due to motion detection event with confidence: ' + confidence.normalized + '\x1B[39m');
+                        db.saveEvent({
+                            monitorId: runningMonitor.id.toString(),
+                            date: new Date(),
+                            type: 'motionEvent',
+                            data: confidence
+                        }, () => {});
+                    }
+                    next();
+                });
+            } else {
+                next();
+            }
         }
     });
 
@@ -173,28 +166,31 @@ function startMotionDetection(runningMonitor){
     log.info('Snapshots to: ' + runningMonitor.config.motionConfig.calculatedSnapShotLocation);
     log.info('Will create new canvas: ' + runningMonitor.config.motionConfig.newCanvas);
     */
-    let lastEventTime=new Date();
+
+    runningMonitor.lastEventTime=new Date();
 
     fs.exists(runningMonitor.config.motionConfig.calculatedSnapShotLocation, (exists)=>{
         if (exists) fs.unlink(runningMonitor.config.motionConfig.calculatedSnapShotLocation, ()=>{});
     });
 
-    let lastSnapShotModTime = new Date();
-    lastSnapShotModTime.setDate(lastSnapShotModTime.getDate() - 1);
+    runningMonitor.lastSnapShotModTime = new Date();
+    runningMonitor.lastSnapShotModTime.setDate(runningMonitor.lastSnapShotModTime.getDate() - 1);
 
     async.whilst(
         ()=>{
-            if (runningMonitor.process.pid && runningMonitor.process.pid !='' && runningMonitor.config.motionConfig.enableMotionDetection) {
-                return true;
-            } else {
-                return false;
-            }
+            let time = process.hrtime();
+            process.nextTick(function() {
+                let diff = process.hrtime(time);
+                if (diff[0] > 2 ) {
+                    log.error('Event Loop Delay is too long: ' + diff[0] + ' seconds.');
+                }
+                //console.log('benchmark took %d nanoseconds', diff[0] * 1e9 + diff[1]);
+            });
+            return !!(runningMonitor.process.pid && runningMonitor.process.pid != '' && runningMonitor.config.motionConfig.enableMotionDetection);
         },
         (cb)=>{
             runningMonitor.timer = setTimeout(()=>{
-                doDetection(runningMonitor, lastSnapShotModTime, lastEventTime, (lastSS, lastEvt)=>{
-                    lastSnapShotModTime = lastSS;
-                    lastEventTime = lastEvt;
+                doDetection(runningMonitor, ()=>{
                     cb();
                 });
             }, 200);
@@ -207,8 +203,8 @@ function startMotionDetection(runningMonitor){
 }
 
 function spawnMonitorProcess(thisMonitor, startupCommand){
-    log.info('Spawning new Process: ' + startupCommand.cmd + ' ' + startupCommand.options.join(' '));
-    log.info('Spawn Detached: ' + db.dbConfig.ff.runMonitorsDetached);
+    //log.info('Spawning new Process: ' + startupCommand.cmd + ' ' + startupCommand.options.join(' '));
+    //log.info('Spawn Detached: ' + db.dbConfig.ff.runMonitorsDetached);
 
     let process = spawn(startupCommand.cmd, startupCommand.options, {detached: db.dbConfig.ff.runMonitorsDetached});
     thisMonitor.pid = process.pid;
@@ -218,7 +214,7 @@ function spawnMonitorProcess(thisMonitor, startupCommand){
     process.stdout.on('close', (code)=>{
         thisMonitor.pid = null;
         thisMonitor.isRunning = false;
-        log.info('Spawned Process (ffmpeg) Stopped, exit code: ' + code);
+        log.info(thisMonitor.alias + ': Process (ffmpeg) Stopped with exit code: ' + code);
     }); //log process stop
     return process;
 }
@@ -236,7 +232,7 @@ function buildStartupCommand(thisMonitor){
 
     //build ffmpeg stream [OUTPUT]
     if (thisMonitor.config.mode === 'record') {
-        log.info('Recording video stream to: ' + thisMonitor.calculatedRecordingLocation);
+        //log.info('Recording video stream to: ' + thisMonitor.calculatedRecordingLocation);
         //Ensure we have a directory for record storage
         if (!fs.existsSync(path.resolve(thisMonitor.calculatedRecordingLocation,thisMonitor.alias))){
             fs.mkdirSync(path.resolve(thisMonitor.calculatedRecordingLocation,thisMonitor.alias));
@@ -247,7 +243,7 @@ function buildStartupCommand(thisMonitor){
 
     //build ffmpeg command [ScreenShot]
     if (thisMonitor.config.motionConfig.enableMotionDetection) {
-        log.info('Enabling Still Image Creation');
+        //log.info('Enabling Still Image Creation');
         options = options.concat(addOptions(getOptionsFromMonitor(ff.stillImage, {})));
         options.push('-s');
         options.push(thisMonitor.config.motionConfig.s);

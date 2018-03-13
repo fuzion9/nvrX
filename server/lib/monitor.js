@@ -37,8 +37,6 @@ let self = module.exports = {
     },
 
     getMonitorById: (id) => {
-        console.log('Get Monitor By ID: ' + id);
-        console.log(monitors.length);
         let monitor = monitors.filter((m) => {
             return m._id.toString() === id;
         });
@@ -119,6 +117,7 @@ function buildStreamPaths(m, next){
 
 //Probe the monitor.  Input = alias:string, or monitor:object
 //Write results of probe to monitor document
+/*
 function ffProbe(monitor, next){
     if (typeof monitor === 'string'){
         db.query('monitors', {alias: monitor}, (err, result)=>{
@@ -132,7 +131,7 @@ function ffProbe(monitor, next){
         });
     }
 }
-
+*/
 function doprobe(monitor, next){
     log.info('Probing: ' + monitor._id);
     let fullProbeCommand = path.resolve(db.dbConfig.ff.toolsPath, db.dbConfig.ff.probeCommand) + ' ' + db.dbConfig.ff.probeFull + ' ' + monitor.calculatedStreamPath;
@@ -140,7 +139,7 @@ function doprobe(monitor, next){
     try {
         monitor.ffProbe = JSON.parse(execSync(fullProbeCommand).toString());
         monitor.ffProbe.lastProbe = new Date();
-        db.updateMonitor(monitor, (result)=>{
+        db.updateMonitor(monitor, ()=>{
             next();
         });
     } catch (e){
@@ -153,7 +152,7 @@ function doprobe(monitor, next){
             monitor.ffProbe = e.message[e.message.length-2].replace('\r', '');
         }
         monitor.ffProbe.lastProbe = new Date();
-        db.updateMonitor(monitor, (result)=>{
+        db.updateMonitor(monitor, ()=>{
             next();
         });
     }

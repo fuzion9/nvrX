@@ -8,7 +8,7 @@ let fs = require('fs');
 
 let self = module.exports = {
     startup: () => {
-        log.info('\x1B[35m[System Startup]\x1B[39m');
+        //log.info('\x1B[35m[System Startup]\x1B[39m');
         self.getAvailableHardwareAccellerators();
         monitors.getAllMonitors((monitors) => {
             runner.startAllMonitors(monitors, ()=>{

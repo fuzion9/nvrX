@@ -5,13 +5,13 @@ let monitors = require('../lib/monitor');
 let runner = require('../lib/monitorRunner');
 module.exports = function (socket) {
     'use strict';
-    log.info('Socket Connect');
+    //log.info('Socket Connect');
     socket.emit('init', {
         status: 'Connected'
     });
 
     socket.on('disconnect', function () {
-        log.info('Socket Disconnected');
+        //log.info('Socket Disconnected');
     });
 
     socket.on('startStream', (data)=>{

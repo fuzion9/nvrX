@@ -15,7 +15,6 @@ let conf = require('../conf/config');
 let db = require('../lib/db');
 db.connect(conf.dbConfig.url, ()=> {
     let app = require('../app');
-    let debug = require('debug')('nvrx:server');
     let http = require('http');
     let log = require('../lib/logger');
     let startup = require('../lib/startUp');
@@ -123,8 +122,7 @@ db.connect(conf.dbConfig.url, ()=> {
         let bind = typeof addr === 'string'
             ? 'pipe ' + addr
             : 'port ' + addr.port;
-        log.info('Listening on ' + bind);
-        log.info('Environment: ' + app.get('env'));
+        log.info('[ \x1B[36m'+app.get('env')+'\x1B[39m  ] : Listening on \x1B[36m' + bind + '\x1B[39m');
         startup.startup();
     }
 });
