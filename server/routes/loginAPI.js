@@ -14,7 +14,7 @@ router.post('/', function(req, res) {
      */
     tryLogin(req.body.username, req.body.password, (err, result)=>{
         if(!err) {
-            log.info(result);
+            log.info('Login Result: ' + result);
             let tokenExpires = moment();
 
             tokenExpires.add(config.jwtConfig.expiryTime, 'seconds');
@@ -29,7 +29,7 @@ router.post('/', function(req, res) {
             req.session.jwtToken = token;
             res.json(token);
         } else {
-            log.info(err);
+            log.info('Report Unauthorized due to error trying login: ' + err);
             /*
              * If the username or password was wrong, return 401 ( Unauthorized )
              * status code and JSON error message
