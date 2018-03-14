@@ -13,6 +13,7 @@ module.exports = function (socket) {
 
     socket.on('disconnect', function () {
         for (let i = 0; i < runningStreams.length; i++){
+            log.info('Stopping ' + runningStreams[i] + ' due to socket disconnect');
             socket.leave('STREAM_' + runningStreams[i]);
         }
     });
