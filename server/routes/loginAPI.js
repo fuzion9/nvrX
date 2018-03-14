@@ -9,9 +9,6 @@ let bcrypt = require('bcrypt');
 
 
 router.post('/', function(req, res) {
-    /*
-     * Check if the username and password is correct (only admin/admin will work as this stands, must read real un/pw from database, pw is bcrypted
-     */
     tryLogin(req.body.username, req.body.password, (err, result)=>{
         if(!err) {
             log.info('Login Result: ' + result);

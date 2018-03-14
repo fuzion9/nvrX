@@ -3,6 +3,7 @@ let db = require('../lib/db');
 let log = require('../lib/logger');
 let monitors = require('../lib/monitor');
 let runner = require('../lib/monitorRunner');
+let runningStreams = [];
 module.exports = function (socket) {
     'use strict';
     //log.info('Socket Connect');
@@ -11,13 +12,16 @@ module.exports = function (socket) {
     });
 
     socket.on('disconnect', function () {
-        //log.info('Socket Disconnected');
+        for (let i = 0; i < runningStreams.length; i++){
+            socket.leave('STREAM_' + runningStreams[i]);
+        }
     });
 
     socket.on('startStream', (data)=>{
         let monitor = monitors.getMonitorById(data.id);
         if (monitor.config.mode !== 'disabled') {
             log.info('\x1B[32mStart Live Stream:\x1B[39m ' + monitor.alias + '(' + data.id + ')');
+            runningStreams.push(data.id);
             socket.join('STREAM_' + data.id);
         }
     });

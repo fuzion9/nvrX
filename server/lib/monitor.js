@@ -115,23 +115,6 @@ function buildStreamPaths(m, next){
     next(m);
 }
 
-//Probe the monitor.  Input = alias:string, or monitor:object
-//Write results of probe to monitor document
-/*
-function ffProbe(monitor, next){
-    if (typeof monitor === 'string'){
-        db.query('monitors', {alias: monitor}, (err, result)=>{
-            doprobe(result[0], ()=>{
-                next();
-            });
-        });
-    } else {
-        doprobe(monitor, ()=>{
-            next();
-        });
-    }
-}
-*/
 function doprobe(monitor, next){
     let fullProbeCommand = path.resolve(db.dbConfig.ff.toolsPath, db.dbConfig.ff.probeCommand) + ' ' + db.dbConfig.ff.probeFull + ' ' + monitor.calculatedStreamPath;
     log.info('['+monitor._id+'] Probing with : ' + fullProbeCommand);
