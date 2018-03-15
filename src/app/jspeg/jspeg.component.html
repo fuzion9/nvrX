@@ -34,7 +34,7 @@
             </div>
             <span>
 
-                <div style="font-size:18px; margin-top:-5px">{{monitorDetails.alias}}</div>
+                <div style="font-size:18px; margin-top:-5px">{{monitorDetails.alias}} (Delay:{{detectionDelay}})</div>
                 <i class="fa fa-plug" style="color:grey" *ngIf="!isRunning"></i>
                 <span *ngIf="isRunning">
                     <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='disabled'"><i

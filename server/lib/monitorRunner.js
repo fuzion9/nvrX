@@ -113,6 +113,7 @@ let self = module.exports = {
 
 
 function doDetection(runningMonitor, next){
+    let detectTime = new Date();
     let snapshot = runningMonitor.config.motionConfig.calculatedSnapShotLocation;
     fs.stat(snapshot, (err, stats) => {
         if (err) {
@@ -148,6 +149,9 @@ function doDetection(runningMonitor, next){
                             data: confidence
                         }, () => {});
                     }
+                    now = new Date();
+                    runningMonitor.lastDetectionTime = (now.getTime() - detectTime.getTime()) / 1000;
+                    //console.log(runningMonitor.alias + ' Detection Time: ' + runningMonitor.lastDetectionTime);
                     next();
                 });
             } else {
@@ -203,7 +207,7 @@ function startMotionDetection(runningMonitor){
 }
 
 function spawnMonitorProcess(thisMonitor, startupCommand){
-    //log.info('Spawning new Process: ' + startupCommand.cmd + ' ' + startupCommand.options.join(' '));
+
     //log.info('Spawn Detached: ' + db.dbConfig.ff.runMonitorsDetached);
 
     let process = spawn(startupCommand.cmd, startupCommand.options, {detached: db.dbConfig.ff.runMonitorsDetached});
@@ -215,6 +219,7 @@ function spawnMonitorProcess(thisMonitor, startupCommand){
         thisMonitor.pid = null;
         thisMonitor.isRunning = false;
         log.info(thisMonitor.alias + ': Process (ffmpeg) Stopped with exit code: ' + code);
+        log.info('Spawning new Process: ' + startupCommand.cmd + ' ' + startupCommand.options.join(' '));
     }); //log process stop
     return process;
 }

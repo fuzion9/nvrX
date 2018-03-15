@@ -29,6 +29,7 @@ router.all('/:feed', function (req, res) {
             mode: monitor.mode,
             isRunning: monitor.isRunning,
             confidence: monitor.motionConfidence,
+            detectionDelay: monitor.lastDetectionTime,
             buffer: buffer
         });
     });
@@ -38,6 +39,7 @@ router.all('/:feed', function (req, res) {
             mode: monitor.mode,
             isRunning: false,
             confidence: {},
+            detectionDelay: 0,
             buffer: null
         });
         log.debug('Incoming Camera Stream Closed');
@@ -94,45 +96,48 @@ router.get('/vidFile/:vId', function (req, res) {
         db.query('vids', {_id: ObjectID(req.params.vId)}, (err, vid) => {
             if (vid.length > 0) {
                 const path = vid[0].filename;
-                if (fs.existsSync(path)) {
-                    const stat = fs.statSync(path);
-                    const fileSize = stat.size;
-                    const range = req.headers.range;
-                    if (range) {
-                        //log.info('Streaming Partial Content File: ' + path + ' (' + stat.size + ' bytes)');
-                        const parts = range.replace(/bytes=/, '').split('-');
-                        const start = parseInt(parts[0], 10);
-                        const end = parts[1]
-                            ? parseInt(parts[1], 10)
-                            : fileSize - 1;
-                        const chunksize = (end - start) + 1;
-                        const file = fs.createReadStream(path, {start, end});
-                        const head = {
-                            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-                            'Accept-Ranges': 'bytes',
-                            'Content-Length': chunksize,
-                            'Content-Type': 'video/mp4',
-                        };
-                        res.writeHead(206, head);
-                        file.pipe(res);
+                fs.stat(path, (err, stat)=>{
+                    if(err){
+                        log.debug('Could not find [' + vid[0].filename + ']');
+                        res.end('File Not Found');
                     } else {
-                        if (!allowNonPartialStreaming) {
-                            log.error('Not Allowed to send Full File: ' + path + ' (' + stat.size + ' bytes)');
-                            return res.sendStatus(416);
-                        } else {
-                            log.info('Streaming FULL non chunked  File: ' + path + ' (' + stat.size + ' bytes)');
+                        const fileSize = stat.size;
+                        const range = req.headers.range;
+                        if (range) {
+                        //log.info('Streaming Partial Content File: ' + path + ' (' + stat.size + ' bytes)');
+                            const parts = range.replace(/bytes=/, '').split('-');
+                            const start = parseInt(parts[0], 10);
+                            const end = parts[1]
+                                ? parseInt(parts[1], 10)
+                                : fileSize - 1;
+                            const chunksize = (end - start) + 1;
+                            const file = fs.createReadStream(path, {start, end});
                             const head = {
-                                'Content-Length': fileSize,
+                                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                                'Accept-Ranges': 'bytes',
+                                'Content-Length': chunksize,
                                 'Content-Type': 'video/mp4',
                             };
-                            res.writeHead(200, head);
-                            fs.createReadStream(path).pipe(res);
+                            res.writeHead(206, head);
+                            file.pipe(res);
+                        } else {
+                            if (!allowNonPartialStreaming) {
+                                log.error('Not Allowed to send Full File: ' + path + ' (' + stat.size + ' bytes)');
+                                return res.sendStatus(416);
+                            } else {
+                                log.info('Streaming FULL non chunked  File: ' + path + ' (' + stat.size + ' bytes)');
+                                const head = {
+                                    'Content-Length': fileSize,
+                                    'Content-Type': 'video/mp4',
+                                };
+                                res.writeHead(200, head);
+                                fs.createReadStream(path).pipe(res);
+                            }
                         }
                     }
-                } else {
-                    log.debug('Could not find [' + vid[0].filename + ']');
-                    res.end('File Not Found');
-                }
+
+                });
+
             }
 
         });
