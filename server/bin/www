@@ -19,12 +19,32 @@ db.connect(conf.dbConfig.url, ()=> {
     let log = require('../lib/logger');
     let startup = require('../lib/startUp');
     let monitorRunner = require('../lib/monitorRunner');
+
+
+    if (process.env.env !== 'development' && db.dbConfig.ssl.enabled){
+        let fs = require('fs');
+        let forceSsl = require('express-force-ssl');
+        let sslConfig = {
+            key: fs.readFileSync('../ssl/private.key'),
+            cert: fs.readFileSync('../ssl/certificate.crt'),
+            ca: fs.readFileSync ('../ssl/bundle.ca-bundle')
+        };
+        app.set('sslPort', db.dbConfig.ssl.port);
+        app.use(forceSsl);
+        global.sslPort = app.get('sslPort');
+        let https = require('https');
+        https.createServer(sslConfig, app).listen(app.get('sslPort'));
+    } else {
+        console.log('dev');
+        console.log(process.env.env);
+    }
     /**
    * Get port from environment and store in Express.
    */
     let port = normalizePort(db.dbConfig.serverPort || '8080');
     app.set('port', port);
     global.port = app.get('port');
+
 
     /**
    * Create HTTP server.
