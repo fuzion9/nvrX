@@ -23,7 +23,7 @@ db.connect(conf.dbConfig.url, ()=> {
     console.log('SSL Enabled: ' + db.dbConfig.ssl.enabled);
 
     if (process.env.env !== 'development' && db.dbConfig.ssl.enabled){
-
+        let forceSsl = require('express-force-ssl');
         let fs = require('fs');
         let sslConfig = {
             key: fs.readFileSync('./server/ssl/private.key'),
@@ -31,7 +31,9 @@ db.connect(conf.dbConfig.url, ()=> {
             ca: fs.readFileSync ('./server/ssl/bundle.ca-bundle')
         };
         app.set('sslPort', db.dbConfig.ssl.port);
-        let forceSsl = require('express-force-ssl');
+        app.set('forceSSLOptions', {
+            httpsPort: db.dbConfig.ssl.port
+        });
         app.use(forceSsl);
         global.sslPort = app.get('sslPort');
         let https = require('https');
