@@ -258,7 +258,7 @@ function buildStartupCommand(thisMonitor){
 
     //build live feed command
     options = options.concat(addOptions(getOptionsFromMonitor(ff.liveOutputStream, thisMonitor.config.liveOutputStream)));
-    options.push('http://localhost:'+ global.port + '/streamIn/' + thisMonitor._id);
+    options.push(global.httpProtocol + '://localhost:'+ global.port + '/streamIn/' + thisMonitor._id);
 
     return {cmd: startupCommand, options: options};
 }

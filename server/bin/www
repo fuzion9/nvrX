@@ -34,13 +34,15 @@ db.connect(conf.dbConfig.url, ()=> {
         let https = require('https');
         server = https.createServer(sslConfig, app).listen(port);
         console.log('Enabling SSL on port: ' + app.get('sslPort'));
+        global.httpProtocol = 'https';
     } else {
         let http = require('http');
         let port = normalizePort(db.dbConfig.serverPort || '8080');
         app.set('port', port);
-        global.port = app.get('port');
         server = http.createServer(app).listen(port);
+        global.httpProtocol = 'http';
     }
+    global.port = app.get('port');
     server.on('error', onError);
     server.on('listening', onListening);
 
