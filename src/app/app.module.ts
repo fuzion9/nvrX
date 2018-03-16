@@ -32,7 +32,7 @@ import {
 import { DirBrowserComponent } from './dir-browser/dir-browser.component';
 import { LoginComponent } from './login/login.component';
 
-const config: SocketIoConfig = {url: '/', options: {}};
+const config: SocketIoConfig = {url: '/', options: {secure: true}};
 
 @NgModule({
     declarations: [
