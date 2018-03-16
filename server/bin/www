@@ -19,11 +19,11 @@ db.connect(conf.dbConfig.url, ()=> {
     let log = require('../lib/logger');
     let startup = require('../lib/startUp');
     let monitorRunner = require('../lib/monitorRunner');
+    let server;
     app.set('env', process.env.env);
     console.log('SSL Enabled: ' + db.dbConfig.ssl.enabled);
 
     if (process.env.env !== 'development' && db.dbConfig.ssl.enabled){
-        let forceSsl = require('express-force-ssl');
         let fs = require('fs');
         let sslConfig = {
             key: fs.readFileSync('./server/ssl/private.key'),
@@ -34,27 +34,27 @@ db.connect(conf.dbConfig.url, ()=> {
         app.set('forceSSLOptions', {
             httpsPort: db.dbConfig.ssl.port
         });
-        app.use(forceSsl);
         global.sslPort = app.get('sslPort');
         let https = require('https');
-        https.createServer(sslConfig, app).listen(app.get('sslPort'));
+        server = https.createServer(sslConfig, app).listen(app.get('sslPort'));
         console.log('Enabling SSL on port: ' + app.get('sslPort'));
     } else {
-        console.log(process.env.env);
+        let port = normalizePort(db.dbConfig.serverPort || '8080');
+        app.set('port', port);
+        global.port = app.get('port');
+        server = http.createServer(app);
     }
     /**
    * Get port from environment and store in Express.
    */
-    let port = normalizePort(db.dbConfig.serverPort || '8080');
-    app.set('port', port);
-    global.port = app.get('port');
+
 
 
     /**
    * Create HTTP server.
    */
 
-    let server = http.createServer(app);
+
 
     /**
    * Listen on provided port, on all network interfaces.
