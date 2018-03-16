@@ -39,7 +39,7 @@ router.all('/:feed', function (req, res) {
             mode: monitor.mode,
             isRunning: false,
             confidence: {},
-            detectionDelay: 0,
+            //detectionDelay: 0,
             buffer: null
         });
         log.debug('Incoming Camera Stream Closed');

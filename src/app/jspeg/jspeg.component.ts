@@ -47,7 +47,7 @@ export class JspegComponent implements OnInit, AfterViewInit {
     diffElement: HTMLImageElement;
     player: any;
     snapshotUrl = '';
-    detectionDelay = '0';
+    //detectionDelay = '0';
 
 
     constructor(private monitorService: MonitorsService, private SCS: StreamControlService) {
@@ -99,7 +99,7 @@ export class JspegComponent implements OnInit, AfterViewInit {
                 this.confidence = newData.confidence.normalized;
                 this.rawConfidence = newData.confidence.raw;
             }
-            this.detectionDelay = newData.detectionDelay;
+            //this.detectionDelay = newData.detectionDelay;
             this.isRunning = newData.isRunning;
             if (this.framecount > 10) this.stateChanging = false;
             if (this.monitorDetails.config.motionConfig.drawDiffBox && this.confidence > 0 && this.diffElement.src) {

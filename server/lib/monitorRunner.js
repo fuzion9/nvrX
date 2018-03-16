@@ -113,7 +113,7 @@ let self = module.exports = {
 
 
 function doDetection(runningMonitor, next){
-    let detectTime = new Date();
+    //let detectTime = new Date();
     let snapshot = runningMonitor.config.motionConfig.calculatedSnapShotLocation;
     fs.stat(snapshot, (err, stats) => {
         if (err) {
@@ -149,8 +149,8 @@ function doDetection(runningMonitor, next){
                             data: confidence
                         }, () => {});
                     }
-                    now = new Date();
-                    runningMonitor.lastDetectionTime = (now.getTime() - detectTime.getTime()) / 1000;
+                    //now = new Date();
+                    //runningMonitor.lastDetectionTime = (now.getTime() - detectTime.getTime()) / 1000;
                     //console.log(runningMonitor.alias + ' Detection Time: ' + runningMonitor.lastDetectionTime);
                     next();
                 });
