@@ -31,6 +31,7 @@ import {
 } from 'ngx-bootstrap';
 import { DirBrowserComponent } from './dir-browser/dir-browser.component';
 import { LoginComponent } from './login/login.component';
+import { SystemStatsComponent } from './system-stats/system-stats.component';
 
 const config: SocketIoConfig = {url: '/', options: {secure: true}};
 
@@ -43,7 +44,8 @@ const config: SocketIoConfig = {url: '/', options: {secure: true}};
         RegionEditorComponent,
         SystemConfigComponent,
         DirBrowserComponent,
-        LoginComponent
+        LoginComponent,
+        SystemStatsComponent
     ],
     imports: [
         HttpClientModule,

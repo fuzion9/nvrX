@@ -164,13 +164,6 @@ function doDetection(runningMonitor, next){
 
 //TODO:  If motion number > 100% should it count as motion?
 function startMotionDetection(runningMonitor){
-    /*
-    log.info('Starting Motion Detection on: ' + runningMonitor.alias);
-    log.info('Detection: ' + runningMonitor.config.motionConfig.enableMotionDetection);
-    log.info('Snapshots to: ' + runningMonitor.config.motionConfig.calculatedSnapShotLocation);
-    log.info('Will create new canvas: ' + runningMonitor.config.motionConfig.newCanvas);
-    */
-
     runningMonitor.lastEventTime=new Date();
 
     fs.exists(runningMonitor.config.motionConfig.calculatedSnapShotLocation, (exists)=>{
@@ -197,7 +190,7 @@ function startMotionDetection(runningMonitor){
                 doDetection(runningMonitor, ()=>{
                     cb();
                 });
-            }, 200);
+            }, 100);
         },
         ()=>{
             log.info('Motion Detection has Stopped');

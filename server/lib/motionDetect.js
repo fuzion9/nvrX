@@ -16,7 +16,6 @@ module.exports = {
                     log.debug('   Using Full Frame as area: ' );
                 }
                 log.info('\x1B[36m[Creating New Canvas]\x1B[39m (' + img.width + 'x' + img.height + ') for: ' + m.alias);
-                //log.debug('Motion Region Filter: ' + m.motionArea);
                 monitors[m.id] = {};
                 monitors[m.id].existingMotionAreaPixelCount = m.motionConfig.motionAreaPixelCount;
                 monitors[m.id].detections = 0;

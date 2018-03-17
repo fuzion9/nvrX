@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs/Subject';
 import {Socket} from 'ng-socket-io';
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 @Injectable()
 export class StreamControlService {
-
+  lastSystemStats: BehaviorSubject<any> = new BehaviorSubject<any>({});
   lastPacket:Date = new Date();
   confidence:any = 0;
 
@@ -13,6 +14,14 @@ export class StreamControlService {
 
   constructor(private socket: Socket) {
     this.startSocketListener();
+  }
+
+  getSystemStats(){
+      this.socket.emit('systemStats');
+      this.socket.on('systemStats', data=>{
+          console.log(data);
+          this.lastSystemStats.next(data);
+      })
   }
 
   startMonitor(id) {
