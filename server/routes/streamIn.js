@@ -73,7 +73,7 @@ router.get('/snapshot/:id', function (req, res) {
         let monitor = runner.getMonitor(req.params.id);
         let file = monitor.config.motionConfig.calculatedSnapShotLocation;
         fs.readFile(file, (err, data) => {
-            if (err) log.error(err);
+            if (err) log.error('streamIn.js || get snapshot error:' + err);
             res.writeHead(200, {'Content-Type': 'image/jpg'});
             res.end(data, 'binary');
         });

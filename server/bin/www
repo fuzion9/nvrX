@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-require('newrelic');
+//require('newrelic');
 process.on('unhandledRejection', (reason, p) => {
     console.log('Unhandled Rejection at: Promise ', p, ' reason: ', reason);
 });
