@@ -141,7 +141,7 @@ function doDetection(runningMonitor, next){
                     let diff = (now.getTime() - runningMonitor.lastEventTime.getTime()) / 1000;
                     if (confidence.normalized >= runningMonitor.config.motionConfig.eventDetectionMin && diff > runningMonitor.config.motionConfig.motionDelay && runningMonitor.config.mode === 'record') {
                         runningMonitor.lastEventTime = new Date();
-                        log.info('\x1B[90mRecording Event on '+runningMonitor.alias+' due to motion detection event with confidence: ' + confidence.normalized + '\x1B[39m');
+                        //log.info('\x1B[90mRecording Event on '+runningMonitor.alias+' due to motion detection event with confidence: ' + confidence.normalized + '\x1B[39m');
                         db.saveEvent({
                             monitorId: runningMonitor.id.toString(),
                             date: new Date(),
@@ -269,7 +269,7 @@ function processStdOut(stdout, location, id, alias){
     vids.alias = alias;
     vids.filename = path.resolve(location, alias, stdout.replace('\n', ''));
     runningMonitors[id].currentFile = vids.filename;
-    log.info('\x1B[90mSegment Complete, Recording Video in DB: ' + vids.filename +'\x1B[39m');
+    //log.info('\x1B[90mSegment Complete, Recording Video in DB: ' + vids.filename +'\x1B[39m');
     getVideoMetaData(vids.filename, (meta)=>{
         vids.meta = meta;
         vids.startDate = new Date(vids.date - (vids.meta.duration * 1000));
@@ -333,7 +333,7 @@ function processAnnoyingffmpegOutput(err, id, alias){
     } else if (err.indexOf('Failed') > -1) {
         log.error('FFMpeg Fail: ' +err);
     } else {
-        //log.error(err);
+        log.error(err);
     }
 
 }
