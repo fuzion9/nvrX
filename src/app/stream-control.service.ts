@@ -19,7 +19,6 @@ export class StreamControlService {
   getSystemStats(){
       this.socket.emit('systemStats');
       this.socket.on('systemStats', data=>{
-          console.log(data);
           this.lastSystemStats.next(data);
       })
   }

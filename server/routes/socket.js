@@ -1,3 +1,4 @@
+let execSync = require('child_process').execSync;
 let ss = require('socket.io-stream');
 let db = require('../lib/db');
 let log = require('../lib/logger');
@@ -36,38 +37,50 @@ module.exports = function (socket) {
     });
 
     socket.on('systemStats', ()=>{
-        socket.emit('systemStats', getCPUStats());
+        getSystemStats((stats)=>{
+            socket.emit('systemStats', stats);
+        });
         statsInterval = setInterval(()=>{
-            socket.emit('systemStats', getSystemStats());
+            getSystemStats((stats)=>{
+                socket.emit('systemStats', stats);
+            });
         }, 5000);
     });
 
 };
 
-function getSystemStats(){
+function getSystemStats(next){
     let stats = {
-        totalMem: os.totalmem(),
-        freeMem: os.freemem(),
+        totalMem: getReadableFileSizeString(os.totalmem()),
+        freeMem: getReadableFileSizeString(os.freemem()),
         loadAvg: os.loadavg(),
-        cpuStat: process.cpuUsage()
+        cpuPercent: getCPUStats()
     };
-    return stats;
+    next(stats);
 }
 
 function getCPUStats(){
     let cpuStat = {};
-    let cpus = os.cpus();
-    console.log(cpus);
-    for(var i = 0; i < cpus.length; i++) {
-        var cpu = cpus[i], total = 0;
-
-        for(var type in cpu.times) {
-            total += cpu.times[type];
-        }
-
-        for(type in cpu.times) {
-            cpuStat[type] = Math.round(100 * cpu.times[type] / total);
-        }
+    if (os.platform() === 'win32'){
+        cpuStat.raw = execSync('wmic cpu get loadpercentage /value');
+        cpuStat.raw = cpuStat.raw.toString().split('=')[1];
+        cpuStat.raw = cpuStat.raw.split('\r')[0];
+    } else {
+        cpuStat.raw = execSync("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'");
+        cpuStat.raw = Math.round(cpuStat.raw);
     }
-    return cpuStat;
+    //console.log(cpuStat.raw);
+    return cpuStat.raw;
 }
+
+function getReadableFileSizeString(fileSizeInBytes) {
+    var i = -1;
+    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+    do {
+        fileSizeInBytes = fileSizeInBytes / 1024;
+        i++;
+    } while (fileSizeInBytes > 1024);
+
+    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+}
+
