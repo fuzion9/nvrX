@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs/Subject';
 import {Socket} from 'ng-socket-io';
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
