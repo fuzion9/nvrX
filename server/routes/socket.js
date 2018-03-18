@@ -63,7 +63,7 @@ function getAvailableMemory(){
     if (os.platform() === 'win32'){
         return getReadableFileSizeString(os.freemem());
     } else {
-        return parseInt(execSync("cat /proc/meminfo | grep MemAvailable | awk '{ print $2 }'"));
+        return getReadableFileSizeString(parseInt(execSync("cat /proc/meminfo | grep MemAvailable | awk '{ print $2 }'")));
     }
 }
 
