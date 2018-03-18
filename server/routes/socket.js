@@ -52,11 +52,19 @@ module.exports = function (socket) {
 function getSystemStats(next){
     let stats = {
         totalMem: getReadableFileSizeString(os.totalmem()),
-        freeMem: getReadableFileSizeString(os.freemem()),
+        freeMem: getAvailableMemory(),
         loadAvg: os.loadavg(),
         cpuPercent: getCPUStats()
     };
     next(stats);
+}
+
+function getAvailableMemory(){
+    if (os.platform() === 'win32'){
+        return getReadableFileSizeString(os.freemem());
+    } else {
+        return parseInt(execSync("cat /proc/meminfo | grep MemAvailable | awk '{ print $2 }'"));
+    }
 }
 
 function getCPUStats(){

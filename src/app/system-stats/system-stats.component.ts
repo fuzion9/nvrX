@@ -9,7 +9,7 @@ import {StreamControlService} from "../stream-control.service";
 export class SystemStatsComponent implements OnInit, AfterViewInit {
     stats = {};
     guageType = 'semi';
-    guageSize = 75;
+    guageSize = 85;
     guages:any = {mem:{}, cpu:{}};
 
   constructor(private scs:StreamControlService) { }
@@ -29,12 +29,12 @@ export class SystemStatsComponent implements OnInit, AfterViewInit {
       for (let i=0; i < labels.length; i++){
           let e = <HTMLElement>labels[i];
           e.style.fontSize='8px';
-          e.style.lineHeight='85px'
+          e.style.lineHeight='95px'
       }
       labels = document.getElementsByClassName('reading-block');
       for (let i=0; i < labels.length; i++){
           let e = <HTMLElement>labels[i];
-          e.style.lineHeight='55px';
+          e.style.lineHeight='65px';
       }
   }
 
@@ -43,8 +43,8 @@ export class SystemStatsComponent implements OnInit, AfterViewInit {
       let memfree = data.freeMem.split(' ');
       this.guages.mem.totalMem = parseFloat(mem[0]);
       this.guages.mem.usedMem = this.guages.mem.totalMem - memfree[0];
-      this.guages.mem.append = mem[1];
-      this.guages.mem.label = 'of ' + data.totalMem;
+      this.guages.mem.append = '/'+ data.totalMem; //mem[1];
+      this.guages.mem.label = 'Memory Usage';
 
       this.guages.cpu.label = 'CPU Usage';
       this.guages.cpu.append = '%';
