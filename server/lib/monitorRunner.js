@@ -330,6 +330,14 @@ function processAnnoyingffmpegOutput(err, id, alias){
         //log.error('FFMpeg Error: ' + err);
     } else if (err.indexOf('Past duration') > -1) {
         //log.error('FFMpeg Fail: ' +err);
+    } else if (err.indexOf('This may result in incorrect') > -1) {
+        //log.error('FFMpeg Fail: ' +err);
+    } else if (err.indexOf('Non-monotonous DTS') > -1) {
+        //log.error('FFMpeg Fail: ' +err);
+    } else if (err.indexOf('[segment @') > -1) {
+        //log.error('FFMpeg Fail: ' +err);
+    } else if (err.indexOf('Guessed Channel Layout for Input') > -1) {
+        //log.error('FFMpeg Fail: ' +err);
     } else {
         log.error(err);
     }
