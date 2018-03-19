@@ -77,7 +77,7 @@ function getCPUStats(){
         //cpuStat.raw = execSync("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'");
         //cpuStat.raw = Math.round(cpuStat.raw);
 
-        cpuStat.raw = execSync("top -d 0.5 -b -n2 | grep \"Cpu(s)\"|tail -n 1 | awk '{print $2 + $4}'");
+        cpuStat.raw = execSync("top -d 0.5 -b -n2 | grep \"Cpu(s)\"|tail -n 1 | awk '{print $2 + $4}'").toString();
     }
     //console.log(cpuStat.raw);
     return cpuStat.raw;
