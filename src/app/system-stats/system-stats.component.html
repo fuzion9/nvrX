@@ -1,8 +1,21 @@
-<div style="position: absolute; margin-top: -25px">
-<ngx-gauge [size]="guageSize" [type]="guageType" [value]="guages.mem.usedMem" [label]="guages.mem.label" [append]="guages.mem.append" [max]="guages.mem.totalMem">
-</ngx-gauge>
-</div>
-<div style="position: absolute; margin-top: -25px; margin-left:100px">
-    <ngx-gauge [size]="guageSize" [type]="guageType" [value]="guages.cpu.value" [label]="guages.cpu.label" [append]="guages.cpu.append">
-    </ngx-gauge>
+<div style="position: absolute; margin-top: -25px; left:150px;" *ngIf="statData">
+    <span>
+        <ngx-gauge [size]="guageSize" [type]="guageType" [value]="guages.mem.usedMem" [label]="guages.mem.label" [cap]="'round'" [foregroundColor]="'#856404'"
+                   [append]="guages.mem.append" [max]="guages.mem.totalMem">
+        </ngx-gauge>
+    </span>
+
+    <span style="margin-left:20px">
+        <ngx-gauge [size]="guageSize" [type]="guageType" [value]="guages.cpu.value" [label]="guages.cpu.label" [foregroundColor]="'#856404'" [cap]="'round'"
+                   [append]="guages.cpu.append">
+        </ngx-gauge>
+    </span>
+
+    <span *ngFor="let volume of guages.disk">
+        <span style="margin-left:20px">
+            <ngx-gauge [size]="guageSize" [type]="guageType" [value]="volume.value" [label]="volume.label" [backgroundColor]="'darkgreen'" [foregroundColor]="'darkred'"
+                       [append]="volume.append" [cap]="'round'">
+            </ngx-gauge>
+        </span>
+    </span>
 </div>

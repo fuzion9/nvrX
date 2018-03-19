@@ -18,6 +18,7 @@ module.exports = function (socket) {
         for (let i = 0; i < runningStreams.length; i++){
             log.info('Stopping ' + runningStreams[i] + ' due to socket disconnect');
             socket.leave('STREAM_' + runningStreams[i]);
+            clearInterval(statsInterval);
         }
     });
 
@@ -46,8 +47,10 @@ module.exports = function (socket) {
             });
         }, 5000);
     });
-
 };
+
+
+
 
 function getSystemStats(next){
     let stats = {};
@@ -57,16 +60,55 @@ function getSystemStats(next){
         stats.freeMem = m;
         getCPUStats((c)=>{
             stats.cpuPercent = c;
-            next(stats);
+            getDiskSpace((disk)=>{
+                stats.disk = disk;
+                next(stats);
+            });
         });
     });
 }
+
+
+
+function getDiskSpace(next){
+    let disk = [];
+    if (os.platform() === 'win32'){
+        exec('wmic logicaldisk get size,freespace,caption /value /format:csv', (error, stdout, stderr)=>{
+            stdout = stdout.replace(/\r/g, '');
+            let r = stdout.split('\n');
+            for (let i =0; i < r.length; i++){
+                if (r[i] !== ''){
+                    let d = r[i].split(',');
+                    if (d[2] !== '' && d[1] !== 'Caption'){
+
+                        let pct = ((parseInt(d[2]) / parseInt(d[3])) * 100).toFixed(1);
+                        disk.push({volume: d[1], totalSpace: getReadableFileSizeString(d[3]), freeSpace: getReadableFileSizeString(d[2]), freePercent: pct});
+                    }
+                }
+            }
+            next(disk);
+        });
+    } else {
+        let vol = '/';
+        //df  -k /tmp | tail -1 | awk '{print $3, $4}' //total, free
+        exec('df -h '+vol+' | tail -1 | awk \'{print $2, $3, $4, $5}\'', (error, stdout, stderr)=>{
+            stdout = stdout.replace(/\n/g, '');
+            let r = stdout.split(' ');
+            disk.push({volume: vol, totalSpace: r[0], freeSpace: r[2], freePercent: 100-(r[3].replace('%',''))});
+            next(disk);
+        });
+
+    }
+
+}
+
+
 
 function getAvailableMemory(next){
     if (os.platform() === 'win32'){
         next(getReadableFileSizeString(os.freemem()));
     } else {
-        exec("cat /proc/meminfo | grep MemAvailable | awk '{ print $2 }'", (error, stdout, stderr)=>{
+        exec('cat /proc/meminfo | grep MemAvailable | awk \'{ print $2 }\'', (error, stdout, stderr)=>{
             next(getReadableFileSizeString(parseInt(stdout)));
         });
     }
@@ -82,15 +124,11 @@ function getCPUStats(next){
             next(cpuStat.raw);
         });
     } else {
-        //cpuStat.raw = execSync("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'");
-        //cpuStat.raw = Math.round(cpuStat.raw);
-        exec("top -d 0.5 -b -n2 | grep \"Cpu(s)\"|tail -n 1 | awk '{print $2 + $4}'", (error, stdout, stderr)=>{
+        exec('top -d 0.5 -b -n2 | grep "Cpu(s)"|tail -n 1 | awk \'{print $2 + $4}\'', (error, stdout, stderr)=>{
             next(stdout.toString());
         });
 
     }
-    //console.log(cpuStat.raw);
-
 }
 
 function getReadableFileSizeString(fileSizeInBytes) {
