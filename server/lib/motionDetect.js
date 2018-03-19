@@ -101,7 +101,7 @@ function performDetection(){
         }
     },
     (err)=>{
-        //console.log('error: ' + err);
+        console.log('Motion Detection Image Load Error: ' + err);
     });
 
 }
@@ -115,8 +115,8 @@ function filterRegion(area, ctx){
             ctx.lineTo(parseInt(coords[i]),parseInt(coords[i+1]));
         }
         ctx.closePath();
-        ctx.strokeStyle='red';
-        ctx.stroke();
+        //ctx.strokeStyle='red';
+        //ctx.stroke();
         ctx.clip();
     }
 }
