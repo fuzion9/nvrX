@@ -1,4 +1,4 @@
-let execSync = require('child_process').execSync;
+let exec = require('child_process').exec;
 let ss = require('socket.io-stream');
 let db = require('../lib/db');
 let log = require('../lib/logger');
@@ -50,37 +50,47 @@ module.exports = function (socket) {
 };
 
 function getSystemStats(next){
-    let stats = {
-        totalMem: getReadableFileSizeString(os.totalmem()),
-        freeMem: getAvailableMemory(),
-        loadAvg: os.loadavg(),
-        cpuPercent: getCPUStats()
-    };
-    next(stats);
+    let stats = {};
+    stats.totalMem = getReadableFileSizeString(os.totalmem());
+    stats.loadAvg = os.loadavg();
+    getAvailableMemory((m)=>{
+        stats.freeMem = m;
+        getCPUStats((c)=>{
+            stats.cpuPercent = c;
+            next(stats);
+        });
+    });
 }
 
-function getAvailableMemory(){
+function getAvailableMemory(next){
     if (os.platform() === 'win32'){
-        return getReadableFileSizeString(os.freemem());
+        next(getReadableFileSizeString(os.freemem()));
     } else {
-        return getReadableFileSizeString(parseInt(execSync("cat /proc/meminfo | grep MemAvailable | awk '{ print $2 }'")));
+        exec("cat /proc/meminfo | grep MemAvailable | awk '{ print $2 }'", (error, stdout, stderr)=>{
+            next(getReadableFileSizeString(parseInt(stdout)));
+        });
     }
 }
 
-function getCPUStats(){
+function getCPUStats(next){
     let cpuStat = {};
     if (os.platform() === 'win32'){
-        cpuStat.raw = execSync('wmic cpu get loadpercentage /value');
-        cpuStat.raw = cpuStat.raw.toString().split('=')[1];
-        cpuStat.raw = cpuStat.raw.split('\r')[0];
+        cpuStat.raw = exec('wmic cpu get loadpercentage /value', (error, stdout, stderr)=>{
+            cpuStat.raw = stdout;
+            cpuStat.raw = cpuStat.raw.toString().split('=')[1];
+            cpuStat.raw = cpuStat.raw.split('\r')[0];
+            next(cpuStat.raw);
+        });
     } else {
         //cpuStat.raw = execSync("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'");
         //cpuStat.raw = Math.round(cpuStat.raw);
+        exec("top -d 0.5 -b -n2 | grep \"Cpu(s)\"|tail -n 1 | awk '{print $2 + $4}'", (error, stdout, stderr)=>{
+            next(stdout.toString());
+        });
 
-        cpuStat.raw = execSync("top -d 0.5 -b -n2 | grep \"Cpu(s)\"|tail -n 1 | awk '{print $2 + $4}'").toString();
     }
     //console.log(cpuStat.raw);
-    return cpuStat.raw;
+
 }
 
 function getReadableFileSizeString(fileSizeInBytes) {
