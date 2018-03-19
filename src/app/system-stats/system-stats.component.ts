@@ -48,8 +48,7 @@ export class SystemStatsComponent implements OnInit, AfterViewInit {
 
       this.guages.cpu.label = 'CPU Usage';
       this.guages.cpu.append = '%';
-      this.guages.cpu.value = parseInt(data.cpuPercent);
-
+      this.guages.cpu.value = parseFloat(data.cpuPercent);
   }
 
 }
