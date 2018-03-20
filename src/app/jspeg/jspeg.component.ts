@@ -2,7 +2,6 @@ import {Component, OnInit, AfterViewInit, Input} from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
 import {StreamControlService} from '../stream-control.service';
 import {MonitorsService} from "../monitors.service";
-import set = Reflect.set;
 
 declare var JSMpeg: any;
 
@@ -47,6 +46,7 @@ export class JspegComponent implements OnInit, AfterViewInit {
     diffElement: HTMLImageElement;
     player: any;
     snapshotUrl = '';
+    stacked: any[] = [];
     //detectionDelay = '0';
 
 
@@ -66,6 +66,8 @@ export class JspegComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.monitorService.currentMonitors[this.monitorId].subscribe((mDetails) => {
             this.monitorDetails = mDetails;
+            this.stacked.push({value:mDetails.config.motionConfig.eventTriggerPercent, type:'info', label:mDetails.config.motionConfig.eventTriggerPercent + '%'});
+            this.stacked.push({value:0, type:'warning', label:''});
             if (mDetails.isDisplayed) {
                 this.displayMonitor();
             } else {
@@ -92,13 +94,17 @@ export class JspegComponent implements OnInit, AfterViewInit {
         this.startMonitor();
         this.dataSubscription = this.SCS.monitors[this.monitorId].stream.subscribe((newData) => {
             this.framecount++;
+
+
             if (newData.confidence) {
+                this.setProgressStack(this.confidence);
+                this.rawConfidence = newData.confidence.raw;
                 this.pixelArea = newData.confidence.motionAreaSize;
                 this.normalizer = newData.confidence.normalizer;
                 this.threshold = newData.confidence.threshold;
                 this.confidence = newData.confidence.normalized;
-                this.rawConfidence = newData.confidence.raw;
             }
+
             //this.detectionDelay = newData.detectionDelay;
             this.isRunning = newData.isRunning;
             if (this.framecount > 10) this.stateChanging = false;
@@ -109,6 +115,31 @@ export class JspegComponent implements OnInit, AfterViewInit {
             });
             this.fitCanvas();
         });
+    }
+
+    setProgressStack(confidence){
+        let trigger = this.monitorDetails.config.motionConfig.eventTriggerPercent;
+        let nCon = this.confidence - trigger;
+        if (confidence > trigger) {
+            this.stacked[0].value = trigger;
+            this.stacked[0].label = '';
+            this.stacked[1].value = nCon;
+            if (confidence > nCon) {
+                this.stacked[1].label = this.confidence + '%';
+            } else {
+                this.stacked[1].label = '';
+            }
+        } else {
+            this.stacked[1].value = 0;
+            this.stacked[1].label = '';
+            this.stacked[0].value = confidence;
+            if (this.confidence > 5) {
+                this.stacked[0].label = this.confidence + '%';
+            } else {
+                this.stacked[0].label = '';
+            }
+        }
+
     }
 
     startMonitor() {

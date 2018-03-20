@@ -1,8 +1,10 @@
 body{
     background-color: #000 !important;
 }
-.progress {height: 5px !important; border-radius: 0 !important;}
+
+.progress {height: 10px !important; border-radius: 0 !important; font-size: 8px !important;}
 .progress .sr-only { position: relative; }
+
 @keyframes fa-blink {
   0% { opacity: 0; }
   25% { opacity: 0.25; }

@@ -1,5 +1,4 @@
 import {Component, OnInit, Input, EventEmitter, Output} from '@angular/core';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 import {SystemConfigService} from "../system-config.service";
 import {MonitorsService} from "../monitors.service";
 import {BsModalService} from "ngx-bootstrap/modal";

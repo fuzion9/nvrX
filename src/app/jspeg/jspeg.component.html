@@ -17,7 +17,7 @@
     </div>
 </div>
 <div *ngIf="monitorDetails.isDisplayed;">
-    <div class="card text-white bg-dark mb-3 liveCard" >
+    <div class="card text-white bg-dark mb-3 liveCard">
         <div class="card-header" style="padding: 2px; padding-left: 10px;  vertical-align: middle; height: 55px;">
             <div class="float-md-right" style="font-size: 14px; text-align: right"
                  *ngIf="isPlaying && monitorDetails.config.mode !== 'disabled' && monitorDetails.config.motionConfig.enableMotionDetection">
@@ -72,26 +72,32 @@
                     </span>
                 </span>
               </span>
-            <div class="row"  *ngIf="stateChanging && monitorDetails.config.mode != 'disabled'">
+            <div class="row" *ngIf="stateChanging && monitorDetails.config.mode != 'disabled'">
                 <div class="stateChangingRow">
                     <i class="fa fa-5x fa-spinner fa-spin"></i>
                 </div>
 
             </div>
+
+
+            <!-- Canvas -->
+            <canvas id="canvas_{{monitorId}}" class="liveCanvas-{{colSize}}"
+                    *ngIf="monitorDetails.config.mode != 'disabled'"></canvas>
+            <!-- Canvas -->
+            <!-- Monitor Disabled -->
+            <div *ngIf="monitorDetails.config.mode === 'disabled'" class="disabledCamera">Camera is disabled</div>
+            <!-- Monitor Disabled -->
+
+            <div class="pBar" style="padding: 0"
+                 [hidden]="(!monitorDetails.config.motionConfig.showMotionLevel || !monitorDetails.config.motionConfig.enableMotionDetection || monitorDetails.config.mode=='disabled')">
+                <progressbar class="progress bg-dark" [value]="stacked" [max]="100"></progressbar>
+                <!--
+				<progressbar type="warning" class="progress-striped active" [striped]="true" [animate]="true" [value]="stacked">
+					<span [hidden]="confidence < 7">{{confidence}}%</span>
+				</progressbar>
+				-->
+            </div>
         </div>
 
-        <!-- Canvas -->
-        <canvas id="canvas_{{monitorId}}" class="liveCanvas-{{colSize}}" *ngIf="monitorDetails.config.mode != 'disabled'"></canvas>
-        <!-- Canvas -->
-
-        <!-- Monitor Disabled -->
-        <div *ngIf="monitorDetails.config.mode === 'disabled'" class="disabledCamera">Camera is disabled</div>
-        <!-- Monitor Disabled -->
-
-        <div class="card-footer" style="padding: 0"
-             [hidden]="(!monitorDetails.config.motionConfig.showMotionLevel || !monitorDetails.config.motionConfig.enableMotionDetection || monitorDetails.config.mode=='disabled')">
-            <progressbar type="warning" class="progress-bar-animated active" [value]="confidence"
-                         style="margin:0; padding: 0;"></progressbar>
-        </div>
     </div>
 </div>
