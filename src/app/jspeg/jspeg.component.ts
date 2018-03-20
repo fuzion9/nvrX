@@ -61,13 +61,16 @@ export class JspegComponent implements OnInit, AfterViewInit {
         })
     }
 
+    ptzAction(action){
+        this.monitorService.ptzAction(this.monitorId, action);
+    }
 
 
     ngOnInit() {
         this.monitorService.currentMonitors[this.monitorId].subscribe((mDetails) => {
             this.monitorDetails = mDetails;
-            this.stacked.push({value:mDetails.config.motionConfig.eventTriggerPercent, type:'info', label:mDetails.config.motionConfig.eventTriggerPercent + '%'});
-            this.stacked.push({value:0, type:'warning', label:''});
+            this.stacked.push({value:mDetails.config.motionConfig.eventTriggerPercent, type:'warning', label:mDetails.config.motionConfig.eventTriggerPercent + '%'});
+            this.stacked.push({value:0, type:'danger', label:''});
             if (mDetails.isDisplayed) {
                 this.displayMonitor();
             } else {
@@ -124,7 +127,7 @@ export class JspegComponent implements OnInit, AfterViewInit {
             this.stacked[0].value = trigger;
             this.stacked[0].label = '';
             this.stacked[1].value = nCon;
-            if (confidence > nCon) {
+            if (confidence > trigger) {
                 this.stacked[1].label = this.confidence + '%';
             } else {
                 this.stacked[1].label = '';
@@ -133,7 +136,7 @@ export class JspegComponent implements OnInit, AfterViewInit {
             this.stacked[1].value = 0;
             this.stacked[1].label = '';
             this.stacked[0].value = confidence;
-            if (this.confidence > 5) {
+            if (this.confidence > 2) {
                 this.stacked[0].label = this.confidence + '%';
             } else {
                 this.stacked[0].label = '';

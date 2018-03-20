@@ -76,9 +76,22 @@
                 <div class="stateChangingRow">
                     <i class="fa fa-5x fa-spinner fa-spin"></i>
                 </div>
-
             </div>
-
+            <div id="ptzControls" class="ptzControls" *ngIf="monitorDetails.config.ptz.enabled">
+                <table cellpadding="2px" cellspacing="0px" style="text-align: center">
+                    <tr>
+                        <td colspan="3"><i class="fa fa-arrow-circle-o-up ptzIcon" (mousedown)="ptzAction('up')" (mouseup)="ptzAction('stop')"></i></td>
+                    </tr>
+                    <tr>
+                        <td width="25px"><i class="fa fa-arrow-circle-o-left ptzIcon" (mousedown)="ptzAction('left')" (mouseup)="ptzAction('stop')"></i></td>
+                        <td width="25px"><i class="fa fa-circle-o ptzIcon" (mousedown)="ptzAction('stop')" (mouseup)="ptzAction('stop')"></i></td>
+                        <td width="25px"><i class="fa fa-arrow-circle-o-right ptzIcon" (mousedown)="ptzAction('right')" (mouseup)="ptzAction('stop')"></i></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><i class="fa fa-arrow-circle-o-down ptzIcon" (mousedown)="ptzAction('down')" (mouseup)="ptzAction('stop')"></i></td>
+                    </tr>
+                </table>
+            </div>
 
             <!-- Canvas -->
             <canvas id="canvas_{{monitorId}}" class="liveCanvas-{{colSize}}"
@@ -90,7 +103,7 @@
 
             <div class="pBar" style="padding: 0"
                  [hidden]="(!monitorDetails.config.motionConfig.showMotionLevel || !monitorDetails.config.motionConfig.enableMotionDetection || monitorDetails.config.mode=='disabled')">
-                <progressbar class="progress bg-dark" [value]="stacked" [max]="100"></progressbar>
+                <progressbar class="progress bg-dark" [value]="stacked" [animate]="true" [striped]="true" [max]="100"></progressbar>
                 <!--
 				<progressbar type="warning" class="progress-striped active" [striped]="true" [animate]="true" [value]="stacked">
 					<span [hidden]="confidence < 7">{{confidence}}%</span>

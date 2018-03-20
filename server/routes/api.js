@@ -11,6 +11,7 @@ let fs = require('fs');
 let runner = require('../lib/monitorRunner');
 let async = require('async');
 let moment = require('moment');
+let request = require('request');
 
 
 
@@ -182,6 +183,19 @@ router.post('/v1/vids', function (req, res) {
     });
 });
 
+router.get('/ptzAction/:id/:action', function (req, res) {
+    let monitor = monitors.getMonitorById(req.params.id);
+    let action = req.params.action;
+    //console.log(monitor.alias + ': ' + action);
+
+    let actionURL = 'http://' +monitor.username + ':' + monitor.password + '@' + monitor.host + monitor.config.ptz[action];
+
+    request(actionURL,(err, result, body)=>{
+        console.log(actionURL);
+        console.log(body);
+        res.send({result: true});
+    });
+});
 
 module.exports = router;
 

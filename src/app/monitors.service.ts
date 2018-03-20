@@ -33,6 +33,14 @@ export class MonitorsService {
 
     }
 
+    ptzAction(id, action){
+        console.log(id + ': ' + action);
+        this.http.get('/api/ptzAction/' + id + '/' + action, this.auth.httpOptions).subscribe(data => {
+            console.log('Action Complete');
+        });
+
+    }
+
     setDisplay(id, val){
         let thisM = this.currentMonitors[id].value;
         thisM.isDisplayed = val;

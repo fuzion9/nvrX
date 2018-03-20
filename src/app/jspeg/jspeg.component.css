@@ -1,3 +1,14 @@
+.ptzControls{
+    position: absolute;
+    bottom:10px;
+    right:0px;
+
+}
+.ptzIcon{
+    text-shadow: 0px 0px 1px black, 0px 0px 1px black;
+    color: white;
+}
+
 .liveCard{
     margin: 2px;
 }
