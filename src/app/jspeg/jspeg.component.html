@@ -77,7 +77,7 @@
                     <i class="fa fa-5x fa-spinner fa-spin"></i>
                 </div>
             </div>
-            <div id="ptzControls" class="ptzControls" *ngIf="monitorDetails.config.ptz.enabled">
+            <div id="ptzControls" class="ptzControls" *ngIf="monitorDetails.config.ptz && monitorDetails.config.ptz.enabled">
                 <table cellpadding="2px" cellspacing="0px" style="text-align: center">
                     <tr>
                         <td colspan="3"><i class="fa fa-arrow-circle-o-up ptzIcon" (mousedown)="ptzAction('up')" (mouseup)="ptzAction('stop')"></i></td>

@@ -68,6 +68,9 @@ let self = module.exports = {
             monitors = m;
             for (let i = 0; i < monitors.length; i++){
                 buildFileLocations(monitors[i]);
+                if (!monitors[i].config.ptz){
+                    monitors[i].config.ptz = {enabled:false};
+                }
             }
             next(monitors);
         });
