@@ -13,6 +13,7 @@ declare var canvasAreaDraw: any;
 })
 export class RegionEditorComponent implements OnInit {
     @Input() monitorDetails:any = {};
+    @Input() FullTextButtonTrigger:boolean = false;
     modalRef: BsModalRef;
 
     @Output() monitorDetailsChange: EventEmitter<object> = new EventEmitter<object>();
@@ -21,6 +22,7 @@ export class RegionEditorComponent implements OnInit {
     snapshotUrl = '';
     //coords = '261,130,413,131,413,258,261,257';
     coords = '';
+
     constructor(private modalService: BsModalService) {
 
     }

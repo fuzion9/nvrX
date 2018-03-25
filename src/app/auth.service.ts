@@ -12,32 +12,35 @@ export class AuthService {
 
     constructor(private http: HttpClient) {
         this.readLocalStorage();
-        if (this.user.jwt){
+        if (this.user.jwt) {
             let now = new Date();
             let expires = new Date(this.user.expires);
-            //console.log(now);
-            //console.log(expires);
-            if (now > expires){
+            if (now > expires) {
                 this.doLogout();
             } else {
-                //console.log(this.user);
-                //console.log('I am already logged in');
                 this.httpOptions.headers = new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': this.user.jwt
                 });
-                this.isLoggedIn.next(true);
+                this.http.get('/api/getLatestUserData', this.httpOptions).subscribe((data: any) => {
+                    console.log(data);
+                    this.user.sortOrder = data.sortOrder;
+                        this.isLoggedIn.next(true);
+                    },
+                    (err) => {
+                        console.log(err);
+                        this.isLoggedIn.next(true);
+                    })
             }
         }
     }
 
-    doLogout(){
+    doLogout() {
         localStorage.clear();
         document.location.href = document.location.href;
     }
 
     doLogin(u, p) {
-        console.log(u + ' / ' + p);
         this.http.post<any>('/loginAPI', {username: u, password: p}).subscribe(data => {
                 console.log('Login Successful');
                 this.setLocalStorage(data);
@@ -60,15 +63,15 @@ export class AuthService {
             });
     }
 
-    readLocalStorage(){
-        this.user.id =  localStorage.getItem('id');
-        this.user.expires =  localStorage.getItem('expires');
-        this.user.tokenDate =  localStorage.getItem('tokenDate');
-        this.user.username =  localStorage.getItem('username');
-        this.user.jwt =  localStorage.getItem('jwt');
+    readLocalStorage() {
+        this.user.id = localStorage.getItem('id');
+        this.user.expires = localStorage.getItem('expires');
+        this.user.tokenDate = localStorage.getItem('tokenDate');
+        this.user.username = localStorage.getItem('username');
+        this.user.jwt = localStorage.getItem('jwt');
     }
 
-    setLocalStorage(data){
+    setLocalStorage(data) {
         console.log(data);
         localStorage.setItem('id', data.id);
         localStorage.setItem('expires', data.expires);

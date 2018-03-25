@@ -24,7 +24,6 @@ export class AppComponent {
         systemConfigService.changeSubject.subscribe(value => {
             if (value){
                 this.dbConfig = systemConfigService.dbConfig;
-                console.log(this.dbConfig.monitorsPerRow);
             }
         });
         this.auth = a;
@@ -47,6 +46,13 @@ export class AppComponent {
                         this.monitorsAvailable.push(m);
                     }
                 }
+
+                if (this.a.user.sortOrder){
+                    console.log('Using Custom Sort Order');
+                    this.monitorsDisplayed = this.a.user.sortOrder;
+                } else {
+                    console.log('Using Default Sort Order');
+                }
             }
         });
     }
@@ -57,10 +63,11 @@ export class AppComponent {
     }
 
     activate($event: any) {
-        this.monitorService.setDisplay($event, true);
+        console.log(this.monitorsDisplayed);
+        this.monitorService.setDisplay($event, true, this.monitorsDisplayed);
     }
 
     deActivate($event: any) {
-        this.monitorService.setDisplay($event, false);
+        this.monitorService.setDisplay($event, false, this.monitorsDisplayed);
     }
 }

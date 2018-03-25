@@ -27,8 +27,9 @@ import {TableModule} from 'primeng/table';
 import {PaginatorModule} from 'primeng/paginator';
 import {
     ModalModule, BsDatepickerModule, ProgressbarComponent, DatepickerModule,
-    ProgressbarModule, TooltipModule
+    ProgressbarModule, TooltipModule,
 } from 'ngx-bootstrap';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 import { DirBrowserComponent } from './dir-browser/dir-browser.component';
 import { LoginComponent } from './login/login.component';
 import { SystemStatsComponent } from './system-stats/system-stats.component';
@@ -63,6 +64,7 @@ const config: SocketIoConfig = {url: '/', options: {secure: true}};
         BsDatepickerModule.forRoot(),
         ProgressbarModule.forRoot(),
         TooltipModule.forRoot(),
+        TabsModule.forRoot(),
         NgxGaugeModule,
         JWBootstrapSwitchModule,
         TableModule,

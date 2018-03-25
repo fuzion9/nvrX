@@ -79,7 +79,7 @@
                      [dropZones]="['cams']">
                     <div id='draggableMonitor' class="col-sm-{{dbConfig.monitorsPerRow}}" *ngFor="let m of monitorsDisplayed; let x=index" dnd-sortable
                          [sortableIndex]="x"
-                         [dragData]="m" (onDropSuccess)="activate($event)">
+                         [dragData]="m" (onDropSuccess)="activate($event, x)">
                         <app-jspeg id="{{x}}" [colSize]="dbConfig.monitorsPerRow" [monitorId]="m"></app-jspeg>
                     </div>
                 </div>

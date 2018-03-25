@@ -57,6 +57,12 @@
         <button type="button" class="btn btn-outline-dark btn-danger" (click)="modalRef.hide()">Cancel</button>
     </div>
 </ng-template>
-<button (click)="open(content)" class="btn btn-sm btn-dark" style="font-size: 14px" tooltip="Adjust Motion Detection Settings">
+
+<button (click)="open(content)" class="btn btn-sm btn-dark" style="font-size: 14px" tooltip="Adjust Motion Detection Settings" *ngIf="!FullTextButtonTrigger">
 <i class="fa fa-area-chart" ></i>
+</button>
+
+<button (click)="open(content)" class="btn btn-sm btn-dark" style="font-size: 14px" tooltip="Adjust Motion Detection Settings" *ngIf="FullTextButtonTrigger">
+    <i class="fa fa-area-chart" ></i>
+    <span>Open Region Editor Dialog to configure Motion Detection Area and sensitiviy</span>
 </button>

@@ -30,7 +30,6 @@ export class MonitorsService {
             this.monitorServiceStatus.next('Initialized');
             //console.log(this.currentMonitors);
         });
-
     }
 
     ptzAction(id, action){
@@ -41,11 +40,16 @@ export class MonitorsService {
 
     }
 
-    setDisplay(id, val){
+    setDisplay(id, val, displayOrder){
         let thisM = this.currentMonitors[id].value;
         thisM.isDisplayed = val;
         this.http.post('/api/updateMonitor/minor/' + id, thisM, this.auth.httpOptions).subscribe(data => {
             this.currentMonitors[id].next(thisM);
+            let payload:any = {};
+            payload.newOrder = displayOrder;
+            this.http.post('/api/updateUserSortOrder', payload, this.auth.httpOptions).subscribe(data => {
+              //
+            })
         });
 
     }

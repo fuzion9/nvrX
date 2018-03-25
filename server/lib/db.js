@@ -65,23 +65,17 @@ let self = module.exports = {
             if (err) log.error(err);
         });
     },
-    /*
-    updateMonitorConfig:(mid, config, next)=>{
-        let col = state.db.collection('monitors');
-        let id = ObjectID(mid);
-        let data = JSON.parse(JSON.stringify(config));
-        delete(data._id);
-        log.info('Updating Monitor Data and Restarting Monitor Process: ' + config.alias);
-
-        col.findOneAndUpdate({_id:id}, data, (err, response)=>{
-            if (err) {
-                next(err);
+    updateUserSortOrder:(id, newOrder, next)=>{
+        let col = state.db.collection('users');
+        col.findOneAndUpdate({_id:ObjectID(id)}, {$set:{sortOrder:newOrder}}, (err, result)=>{
+            if (err){
+                console.log(err);
+                next('Update User Sort Order Failed');
             } else {
-                next();
+                next('Update User Sort Order Complete');
             }
         });
-
-    },*/
+    },
     updateMonitor: (monitor, next)=>{
         if (!monitor.config.motionConfig.enableMotionDetection){
             monitor.config.motionConfig.drawDiffBox = false;

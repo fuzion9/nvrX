@@ -7,13 +7,9 @@ module.exports = function(req, res, next) {
      */
     if( req.hasOwnProperty('headers') && req.headers.hasOwnProperty('authorization') ) {
         try {
-            /*
-             * Try to decode & verify the JWT token
-             * The token contains user's id ( it can contain more informations )
-             * and this is saved in req.user object
-             */
             req.user = jwt.verify(req.headers['authorization'], config.jwtConfig.JWT_SECRET);
         } catch(err) {
+            console.log(err);
             /*
              * If the authorization header is corrupted, it throws exception
              * So return 401 status code with JSON error message

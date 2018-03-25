@@ -2,6 +2,10 @@
     font-size:10px;
 }
 
+.tabLabel{
+    color: #1b1e21;
+}
+
 
 /* Important part */
 .modal-dialog {

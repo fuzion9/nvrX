@@ -5,6 +5,7 @@ import {MonitorsService, Monitor} from "../monitors.service";
 import {BsModalService} from "ngx-bootstrap/modal";
 import {BsModalRef} from "ngx-bootstrap/modal/bs-modal-ref.service";
 
+
 @Component({
     selector: 'app-monitor-settings',
     templateUrl: './monitor-settings.component.html',
@@ -65,6 +66,12 @@ export class MonitorSettingsComponent implements OnInit {
     doSave(){
         this.monitorsService.configChangeAndRestartMonitor(this.monitorDetails);
         this.modalRef.hide();
+    }
+
+    doSaveNoRestart(ev) {
+        console.log('Minor Change: ' + ev);
+        console.log(this.monitorDetails);
+        this.monitorsService.configChange(ev, this.monitorDetails._id, this.monitorDetails);
     }
 
     getCurrentMonitors(){

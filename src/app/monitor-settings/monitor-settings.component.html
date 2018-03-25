@@ -8,263 +8,288 @@
         </button>
     </div>
     <div class="modal-body">
-
         <form [formGroup]="monitorEditor">
-            <fieldset class="form-group">
-                <legend><i class="fa fa-plug"></i> Camera Connection</legend>
-
-                <div class="form-group row">
-                    <label for="name" class="col-sm-2 col-form-label col-form-label-sm">Camera Name:</label>
-                    <div class="col-sm-10">
-                        <input id="name" formControlName="name" [(ngModel)]="monitorDetails.alias"
-                               class="form-control form-control-sm" type="text">
-                        <span class="form-text text-muted helpFont">The display name for the camera</span>
-                    </div>
-
-
-                </div>
-
-                <div class="form-group row">
-                    <label for="type" class="col-sm-2 col-form-label col-form-label-sm">Stream Type:</label>
-                    <div class="col-sm-10">
-                        <select id="type" formControlName="type" [(ngModel)]="monitorDetails.type"
-                                class="form-control form-control-sm">
-                            <option value="rtsp">RTSP (Real Time Streaming Protocol)</option>
-                        </select>
-                        <span class="form-text text-muted helpFont">The protocol to be used when connecting to the camera</span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="host" class="col-sm-2 col-form-label col-form-label-sm">Camera Host:</label>
-                    <div class="col-sm-10">
-                        <input id="host" formControlName="host" [(ngModel)]="monitorDetails.host"
-                               class="form-control form-control-sm" type="text">
-                        <span
-                            class="form-text text-muted helpFont">Hostname / IP Address of Camera</span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="username" class="col-sm-2 col-form-label col-form-label-sm">Camera Login
-                        Username:</label>
-                    <div class="col-sm-10">
-                        <input id="username" formControlName="username" [(ngModel)]="monitorDetails.username"
-                               class="form-control form-control-sm" type="text">
-                        <span
-                            class="form-text text-muted helpFont">The username to use when connecting to the camera</span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="password" class="col-sm-2 col-form-label col-form-label-sm">Camera Login
-                        Password:</label>
-                    <div class="col-sm-10">
-                        <input id="password" formControlName="password" [(ngModel)]="monitorDetails.password"
-                               class="form-control form-control-sm" type="text">
-                        <span
-                            class="form-text text-muted helpFont">The password to use when connecting to the camera</span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="port" class="col-sm-2 col-form-label col-form-label-sm">Camera Port:</label>
-                    <div class="col-sm-10">
-                        <input id="port" formControlName="port" [(ngModel)]="monitorDetails.port"
-                               class="form-control form-control-sm" type="text">
-                        <span class="form-text text-muted helpFont">The port the camera is listening for connections on.  (Default for RTSP: 554)</span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="path" class="col-sm-2 col-form-label col-form-label-sm">Camera URL Path:</label>
-                    <div class="col-sm-10">
-                        <input id="path" formControlName="path" [(ngModel)]="monitorDetails.path"
-                               class="form-control form-control-sm" type="text">
-                        <span class="form-text text-muted helpFont">The path to use when connecting to the camera (Typically something like: /Streaming/Channels/2)</span>
-                    </div>
-                </div>
-
-
-                <div class="form-group row">
-                    <label for="streamPath" class="col-sm-2 col-form-label col-form-label-sm">Camera Connect
-                        URL:</label>
-                    <div class="col-sm-8">
-                        <input id="streamPath" formControlName="calculatedStreamPath"
-                               [(ngModel)]="monitorDetails.calculatedStreamPath" class="form-control form-control-sm"
-                               type="text">
-                        <span class="form-text text-muted helpFont">The complete connection URL for the camera based on the above inputs.</span>
-                    </div>
-                    <div class="col-sm-2">
-                        <button type="button" class="btn btn-dark btn-sm" (click)="probeCamera()">Probe Camera</button>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="form-group" *ngIf="monitorDetails.ffProbe.streams">
-                <div style="background-color: #000; padding:10px;">
-                    <legend><i class="fa fa-info"></i> Probe Results</legend>
-                    <div class="row">
-                        <div class="col-2 col-form-label col-form-label-sm">Probe Time:</div>
-                        <div class="col-10">{{monitorDetails.ffProbe.lastProbe | date:'medium'}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-2 col-form-label col-form-label-sm">Resolution:</div>
-                        <div class="col-10">{{monitorDetails.ffProbe.streams[0].width}} x
-                            {{monitorDetails.ffProbe.streams[0].height}}
+            <tabset #staticTabs>
+                <tab>
+                    <ng-template tabHeading><i class="fa fa-plug"></i> Camera Connection</ng-template>
+                    <fieldset class="form-group">
+                        <!--<legend><i class="fa fa-plug"></i> Camera Connection</legend>-->
+                        <br/>
+                        <div class="form-group row">
+                            <label for="mode" class="col-sm-2 col-form-label col-form-label-sm">Camera Mode:</label>
+                            <div class="col-sm-10">
+                                <select id="mode" formControlName="mode" [(ngModel)]="monitorDetails.config.mode"
+                                        class="form-control form-control-sm">
+                                    <option value="record">Record Stream to Local Storage</option>
+                                    <option value="watch">Watch Only</option>
+                                    <option value="disabled">Disabled (This camera will not be started, and will appear
+                                        disconnected)
+                                    </option>
+                                </select>
+                                <span class="form-text text-muted helpFont">Choose a mode for this Camera</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-2 col-form-label col-form-label-sm">Codec:</div>
-                        <div class="col-10">{{monitorDetails.ffProbe.streams[0].codec_long_name}}</div>
-                    </div>
-                </div>
-            </fieldset>
 
-            <fieldset class="form-group">
-                <legend><i class="fa fa-compress"></i> Camera Input Options</legend>
+                        <div class="form-group row">
+                            <label for="name" class="col-sm-2 col-form-label col-form-label-sm">Camera Name:</label>
+                            <div class="col-sm-10">
+                                <input id="name" formControlName="name" [(ngModel)]="monitorDetails.alias"
+                                       class="form-control form-control-sm" type="text">
+                                <span class="form-text text-muted helpFont">The display name for the camera</span>
+                            </div>
+                        </div>
 
-                <div class="form-group row">
-                    <label for="mode" class="col-sm-2 col-form-label col-form-label-sm">System Mode:</label>
-                    <div class="col-sm-10">
-                        <select id="mode" formControlName="mode" [(ngModel)]="monitorDetails.config.mode"
-                                class="form-control form-control-sm">
-                            <option value="record">Record Stream to Local Storage</option>
-                            <option value="watch">Watch Only</option>
-                            <option value="disabled">Disabled (This camera will not be started, and will appear
-                                disconnected)
-                            </option>
-                        </select>
-                        <span class="form-text text-muted helpFont">Choose a mode for this Camera</span>
-                    </div>
-                </div>
+                        <div class="form-group row">
+                            <label for="type" class="col-sm-2 col-form-label col-form-label-sm">Stream Type:</label>
+                            <div class="col-sm-10">
+                                <select id="type" formControlName="type" [(ngModel)]="monitorDetails.type"
+                                        class="form-control form-control-sm">
+                                    <option value="rtsp">RTSP (Real Time Streaming Protocol)</option>
+                                </select>
+                                <span class="form-text text-muted helpFont">The protocol to be used when connecting to the camera</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="host" class="col-sm-2 col-form-label col-form-label-sm">Camera Host:</label>
+                            <div class="col-sm-10">
+                                <input id="host" formControlName="host" [(ngModel)]="monitorDetails.host"
+                                       class="form-control form-control-sm" type="text">
+                                <span
+                                    class="form-text text-muted helpFont">Hostname / IP Address of Camera</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="username" class="col-sm-2 col-form-label col-form-label-sm">Camera Login
+                                Username:</label>
+                            <div class="col-sm-10">
+                                <input id="username" formControlName="username" [(ngModel)]="monitorDetails.username"
+                                       class="form-control form-control-sm" type="text">
+                                <span
+                                    class="form-text text-muted helpFont">The username to use when connecting to the camera</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="password" class="col-sm-2 col-form-label col-form-label-sm">Camera Login
+                                Password:</label>
+                            <div class="col-sm-10">
+                                <input id="password" formControlName="password" [(ngModel)]="monitorDetails.password"
+                                       class="form-control form-control-sm" type="text">
+                                <span
+                                    class="form-text text-muted helpFont">The password to use when connecting to the camera</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="port" class="col-sm-2 col-form-label col-form-label-sm">Camera Port:</label>
+                            <div class="col-sm-10">
+                                <input id="port" formControlName="port" [(ngModel)]="monitorDetails.port"
+                                       class="form-control form-control-sm" type="text">
+                                <span class="form-text text-muted helpFont">The port the camera is listening for connections on.  (Default for RTSP: 554)</span>
+                            </div>
+                        </div>
 
 
-                <div class="form-group row">
-                    <label for="hwaccel" class="col-sm-2 col-form-label col-form-label-sm">Hardware Accelerator:</label>
-                    <div class="col-sm-10">
-                        <select id="hwaccel" formControlName="hwaccel" [(ngModel)]="monitorDetails.config.input.hwaccel"
-                                class="form-control form-control-sm">
-                            <option [ngValue]="'none'">None</option>
-                            <option *ngFor="let accell of dbConfig.ff.availableHWAccels" [ngValue]="accell">{{accell}}
-                            </option>
-                        </select>
-                        <span class="form-text text-muted helpFont">Choose a hardware accelerator.  Only detected accelerators are shown.</span>
-                    </div>
-                </div>
+                        <div class="form-group row">
+                            <label for="hwaccel" class="col-sm-2 col-form-label col-form-label-sm">Hardware
+                                Accelerator:</label>
+                            <div class="col-sm-10">
+                                <select id="hwaccel" formControlName="hwaccel"
+                                        [(ngModel)]="monitorDetails.config.input.hwaccel"
+                                        class="form-control form-control-sm">
+                                    <option [ngValue]="'none'">None</option>
+                                    <option *ngFor="let accell of dbConfig.ff.availableHWAccels" [ngValue]="accell">
+                                        {{accell}}
+                                    </option>
+                                </select>
+                                <span class="form-text text-muted helpFont">Choose a hardware accelerator.  Only detected accelerators are shown.</span>
+                            </div>
+                        </div>
 
-                <div class="form-group row">
-                    <label for="sProtocol" class="col-sm-2 col-form-label col-form-label-sm">RTSP Transport
-                        Protocol:</label>
-                    <div class="col-sm-10">
-                        <select id="sProtocol" formControlName="rtsp_transport"
-                                [(ngModel)]="monitorDetails.config.input.rtsp_transport"
-                                class="form-control form-control-sm">
-                            <option value="tcp">tcp</option>
-                            <option value="udp">udp</option>
-                        </select>
-                    </div>
-                </div>
-            </fieldset>
+                        <div class="form-group row">
+                            <label for="sProtocol" class="col-sm-2 col-form-label col-form-label-sm">RTSP Transport
+                                Protocol:</label>
+                            <div class="col-sm-10">
+                                <select id="sProtocol" formControlName="rtsp_transport"
+                                        [(ngModel)]="monitorDetails.config.input.rtsp_transport"
+                                        class="form-control form-control-sm">
+                                    <option value="tcp">tcp</option>
+                                    <option value="udp">udp</option>
+                                </select>
+                            </div>
+                        </div>
 
-            <fieldset class="form-group">
-                <legend><i class="fa fa-hdd-o"></i> Recording Properties</legend>
+                        <div class="form-group row">
+                            <label for="path" class="col-sm-2 col-form-label col-form-label-sm">Camera URL Path:</label>
+                            <div class="col-sm-10">
+                                <input id="path" formControlName="path" [(ngModel)]="monitorDetails.path"
+                                       class="form-control form-control-sm" type="text">
+                                <span class="form-text text-muted helpFont">The path to use when connecting to the camera (Typically something like: /Streaming/Channels/2)</span>
+                            </div>
+                        </div>
 
-                <div class="form-group row">
-                    <label for="rLocation" class="col-sm-2 col-form-label col-form-label-sm">Video Storage:</label>
-                    <div class="col-sm-10">
-                        <select id="rLocation" formControlName="recordLocation"
-                                [(ngModel)]="monitorDetails.recordLocation" class="form-control form-control-sm">
-                            <option *ngFor="let location of dbConfig['storageLocations']" [ngValue]="location.name">
-                                {{location.name}} ({{location.path}})
-                            </option>
-                        </select>
-                        <span class="form-text text-muted helpFont">Configure storage locations in System Configuration settings.</span>
-                    </div>
-                </div>
 
-                <div class="form-group row">
-                    <label for="codec" class="col-sm-2 col-form-label col-form-label-sm">Video File Codec:</label>
-                    <div class="col-sm-10">
-                        <select id="codec" formControlName="vcodec"
-                                [(ngModel)]="monitorDetails.config.recordOutput.vcodec"
-                                class="form-control form-control-sm">
-                            <option *ngFor="let codec of dbConfig.availableCodecs">{{codec}}</option>
-                        </select>
-                        <span class="form-text text-muted helpFont">Record Video using this Codec (copy = use source codec)</span>
-                    </div>
-                </div>
+                        <div class="form-group row">
+                            <label for="streamPath" class="col-sm-2 col-form-label col-form-label-sm">Camera Connect
+                                URL:</label>
+                            <div class="col-sm-8">
+                                <input id="streamPath" formControlName="calculatedStreamPath"
+                                       [(ngModel)]="monitorDetails.calculatedStreamPath"
+                                       class="form-control form-control-sm"
+                                       type="text">
+                                <span class="form-text text-muted helpFont">The complete connection URL for the camera based on the above inputs.</span>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-dark btn-sm" (click)="probeCamera()">Probe Camera
+                                </button>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="form-group" *ngIf="monitorDetails.ffProbe.streams">
+                        <div style="background-color: #000; padding:10px;">
+                            <legend><i class="fa fa-info"></i> Probe Results</legend>
+                            <div class="row">
+                                <div class="col-2 col-form-label col-form-label-sm">Probe Time:</div>
+                                <div class="col-10">{{monitorDetails.ffProbe.lastProbe | date:'medium'}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2 col-form-label col-form-label-sm">Resolution:</div>
+                                <div class="col-10">{{monitorDetails.ffProbe.streams[0].width}} x
+                                    {{monitorDetails.ffProbe.streams[0].height}}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2 col-form-label col-form-label-sm">Codec:</div>
+                                <div class="col-10">{{monitorDetails.ffProbe.streams[0].codec_long_name}}</div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </tab>
 
-                <div class="form-group row">
-                    <label for="framerate" class="col-sm-2 col-form-label col-form-label-sm">Record Framerate:</label>
-                    <div class="col-sm-10">
-                        <select id="framerate" formControlName="r" [(ngModel)]="monitorDetails.config.recordOutput.r"
-                                class="form-control form-control-sm">
-                            <option *ngFor="let rate of dbConfig.availableFrameRates" [ngValue]="rate">
-                                {{rate}}
-                            </option>
-                        </select>
-                        <span class="form-text text-muted helpFont">Record video at this framerate.</span>
-                    </div>
-                </div>
+                <tab>
+                    <ng-template tabHeading><i class="fa fa-hdd-o"></i>  Recording Properties</ng-template>
+                    <br/>
+                    <fieldset class="form-group">
 
-                <div class="form-group row">
-                    <label for="vLength" class="col-sm-2 col-form-label col-form-label-sm">Video Length:</label>
-                    <div class="col-sm-10">
-                        <select id="vLength" formControlName="segment_time"
-                                [(ngModel)]="monitorDetails.config.recordOutput.segment_time"
-                                class="form-control form-control-sm">
-                            <option *ngFor="let lng of dbConfig.availableVideoLengths" [ngValue]="lng.value">
-                                {{lng.name}}
-                            </option>
-                        </select>
-                        <span class="form-text text-muted helpFont">How long to record before beginning a new video file.</span>
-                    </div>
-                </div>
-            </fieldset>
 
-            <fieldset class="form-group">
-                <legend><i class="fa fa-signal"></i> Motion Detection</legend>
+                        <div class="form-group row">
+                            <label for="rLocation" class="col-sm-2 col-form-label col-form-label-sm">Video
+                                Storage:</label>
+                            <div class="col-sm-10">
+                                <select id="rLocation" formControlName="recordLocation"
+                                        [(ngModel)]="monitorDetails.recordLocation"
+                                        class="form-control form-control-sm">
+                                    <option *ngFor="let location of dbConfig['storageLocations']"
+                                            [ngValue]="location.name">
+                                        {{location.name}} ({{location.path}})
+                                    </option>
+                                </select>
+                                <span class="form-text text-muted helpFont">Configure storage locations in System Configuration settings.</span>
+                            </div>
+                        </div>
 
-                <div class="form-group row">
-                    <label for="eMD" class="col-sm-2 col-form-label col-form-label-sm">System Mode:</label>
-                    <div class="col-sm-10">
-                        <select id="eMD" formControlName="enableMotionDetection"
-                                [(ngModel)]="monitorDetails.config.motionConfig.enableMotionDetection"
-                                class="form-control form-control-sm">
-                            <option [ngValue]="true">Yes (Motion Detector enabled - Still frames will be captured)
-                            </option>
-                            <option [ngValue]="false">No (Motion Detector disabled - Still frames will NOT be
-                                captured)
-                            </option>
-                        </select>
-                    </div>
-                </div>
+                        <div class="form-group row">
+                            <label for="codec" class="col-sm-2 col-form-label col-form-label-sm">Video File
+                                Codec:</label>
+                            <div class="col-sm-10">
+                                <select id="codec" formControlName="vcodec"
+                                        [(ngModel)]="monitorDetails.config.recordOutput.vcodec"
+                                        class="form-control form-control-sm">
+                                    <option *ngFor="let codec of dbConfig.availableCodecs">{{codec}}</option>
+                                </select>
+                                <span class="form-text text-muted helpFont">Record Video using this Codec (copy = use source codec)</span>
+                            </div>
+                        </div>
 
-                <div class="form-group row">
-                    <label for="ssLocation" class="col-sm-2 col-form-label col-form-label-sm">Snapshot Storage:</label>
-                    <div class="col-sm-10">
-                        <select id="ssLocation" formControlName="ssLocation"
-                                [(ngModel)]="monitorDetails.snapShotLocation" class="form-control form-control-sm">
-                            <option *ngFor="let location of dbConfig['storageLocations']" [ngValue]="location.name">
-                                {{location.name}} ({{location.path}})
-                            </option>
-                        </select>
-                        <span class="form-text text-muted helpFont">Configure storage locations in System Configuration settings.</span>
-                    </div>
-                </div>
+                        <div class="form-group row">
+                            <label for="framerate" class="col-sm-2 col-form-label col-form-label-sm">Record
+                                Framerate:</label>
+                            <div class="col-sm-10">
+                                <select id="framerate" formControlName="r"
+                                        [(ngModel)]="monitorDetails.config.recordOutput.r"
+                                        class="form-control form-control-sm">
+                                    <option *ngFor="let rate of dbConfig.availableFrameRates" [ngValue]="rate">
+                                        {{rate}}
+                                    </option>
+                                </select>
+                                <span class="form-text text-muted helpFont">Record video at this framerate.</span>
+                            </div>
+                        </div>
 
-                <div class="form-group row">
-                    <label for="s" class="col-sm-2 col-form-label col-form-label-sm">Snapshot Image Size:</label>
-                    <div class="col-sm-10">
-                        <input id="s" formControlName="s" [(ngModel)]="monitorDetails.config.motionConfig.s"
-                               class="form-control form-control-sm" type="text">
-                        <span class="form-text text-muted helpFont">This is the size of the image that will be produced in order to detect motion.  It is suggested to use a size equal to or smaller than the native resolution of this camera stream (probe for native resolution)  Bigger=slower</span>
-                    </div>
-                </div>
+                        <div class="form-group row">
+                            <label for="vLength" class="col-sm-2 col-form-label col-form-label-sm">Video Length:</label>
+                            <div class="col-sm-10">
+                                <select id="vLength" formControlName="segment_time"
+                                        [(ngModel)]="monitorDetails.config.recordOutput.segment_time"
+                                        class="form-control form-control-sm">
+                                    <option *ngFor="let lng of dbConfig.availableVideoLengths" [ngValue]="lng.value">
+                                        {{lng.name}}
+                                    </option>
+                                </select>
+                                <span class="form-text text-muted helpFont">How long to record before beginning a new video file.</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                </tab>
 
-            </fieldset>
+                <tab>
+                    <ng-template tabHeading><i class="fa fa-signal"></i> Motion Detection</ng-template>
+                    <br/>
+                    <fieldset class="form-group">
+
+
+                        <div class="form-group row">
+                            <label for="eMD" class="col-sm-2 col-form-label col-form-label-sm">System Mode:</label>
+                            <div class="col-sm-10">
+                                <select id="eMD" formControlName="enableMotionDetection"
+                                        [(ngModel)]="monitorDetails.config.motionConfig.enableMotionDetection"
+                                        class="form-control form-control-sm">
+                                    <option [ngValue]="true">Yes (Motion Detector enabled - Still frames will be
+                                        captured)
+                                    </option>
+                                    <option [ngValue]="false">No (Motion Detector disabled - Still frames will NOT be
+                                        captured)
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="ssLocation" class="col-sm-2 col-form-label col-form-label-sm">Snapshot
+                                Storage:</label>
+                            <div class="col-sm-10">
+                                <select id="ssLocation" formControlName="ssLocation"
+                                        [(ngModel)]="monitorDetails.snapShotLocation"
+                                        class="form-control form-control-sm">
+                                    <option *ngFor="let location of dbConfig['storageLocations']"
+                                            [ngValue]="location.name">
+                                        {{location.name}} ({{location.path}})
+                                    </option>
+                                </select>
+                                <span class="form-text text-muted helpFont">Configure storage locations in System Configuration settings.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="s" class="col-sm-2 col-form-label col-form-label-sm">Snapshot Image
+                                Size:</label>
+                            <div class="col-sm-10">
+                                <input id="s" formControlName="s" [(ngModel)]="monitorDetails.config.motionConfig.s"
+                                       class="form-control form-control-sm" type="text">
+                                <span class="form-text text-muted helpFont">This is the size of the image that will be produced in order to detect motion.  It is suggested to use a size equal to or smaller than the native resolution of this camera stream (probe for native resolution)  Bigger=slower</span>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 50px">
+                        <app-region-editor [(monitorDetails)]="monitorDetails" (doSave)="doSaveNoRestart($event)" [FullTextButtonTrigger]="true"
+                                           *ngIf="monitorDetails.config.motionConfig.enableMotionDetection"></app-region-editor>
+                        </div>
+                    </fieldset>
+                </tab>
+            </tabset>
         </form>
+
     </div>
     <div class="modal-footer">
         <div class="row" style="width: 100%">

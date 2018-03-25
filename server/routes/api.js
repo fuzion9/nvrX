@@ -12,8 +12,23 @@ let runner = require('../lib/monitorRunner');
 let async = require('async');
 let moment = require('moment');
 let request = require('request');
+let ObjectID = require('mongodb').ObjectID;
 
+router.get('/getLatestUserData', function (req, res) {
+    console.log('Get Latest User Data');
+    db.query('users', {_id:ObjectID(req.session.jwtToken.id)}, (err, result)=>{
+        res.json(result[0]);
+    });
+});
 
+router.post('/updateUserSortOrder', function (req, res) {
+    let newOrder = req.body;
+    log.info('\x1B[35m[Update user Sort Order]' + '\x1B[39m');
+    db.updateUserSortOrder(req.session.jwtToken.id, newOrder.newOrder, (result)=>{
+        console.log(result);
+        res.json(newOrder);
+    });
+});
 
 router.post('/updateActivationStatus', function (req, res) {
     let m = req.body;

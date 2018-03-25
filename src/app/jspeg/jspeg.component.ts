@@ -176,7 +176,7 @@ export class JspegComponent implements OnInit, AfterViewInit {
                 });
                 this.fitCanvas();
             } else {
-                console.log('Could not locate canvas: ' + canvasElement);
+                //console.log('Could not locate canvas: ' + canvasElement);
             }
             next();
         } else {
