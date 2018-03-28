@@ -48,10 +48,7 @@ export class AppComponent {
                 }
 
                 if (this.a.user.sortOrder){
-                    console.log('Using Custom Sort Order');
                     this.monitorsDisplayed = this.a.user.sortOrder;
-                } else {
-                    console.log('Using Default Sort Order');
                 }
             }
         });

@@ -14,6 +14,12 @@ let moment = require('moment');
 let request = require('request');
 let ObjectID = require('mongodb').ObjectID;
 
+router.get('/doHouseKeeping', function (req, res) {
+    console.log('Start House Keeping');
+    monitors.housekeeping();
+    res.json({job: 'Started'});
+});
+
 router.get('/getLatestUserData', function (req, res) {
     console.log('Get Latest User Data');
     db.query('users', {_id:ObjectID(req.session.jwtToken.id)}, (err, result)=>{

@@ -23,7 +23,6 @@ export class AuthService {
                     'Authorization': this.user.jwt
                 });
                 this.http.get('/api/getLatestUserData', this.httpOptions).subscribe((data: any) => {
-                    console.log(data);
                     this.user.sortOrder = data.sortOrder;
                         this.isLoggedIn.next(true);
                     },

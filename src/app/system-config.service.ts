@@ -32,6 +32,11 @@ export class SystemConfigService {
 
     }
 
+    doHouseKeeping(){
+        this.http.get('/api/doHouseKeeping', this.auth.httpOptions).subscribe(data => {
+        })
+    }
+
     updateConfigValue(key, value){
         this.dbConfig[key] = value;
         this.saveNewConfig(this.dbConfig, null);

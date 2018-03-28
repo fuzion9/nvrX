@@ -25,6 +25,10 @@ export class SystemConfigComponent implements OnInit {
     ngOnInit() {
     }
 
+    doHouseKeeping(){
+        this.systemConfigService.doHouseKeeping();
+    }
+
     removeLocation(i) {
         this.dbConfig['storageLocations'].splice([i], 1);
     }
