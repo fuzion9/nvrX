@@ -1,27 +1,77 @@
 # Nvrx
+A Network Video Recording system for almost all IP Cameras.  
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.8.
+# Requirements
+* Linux/Windows
+* ffmpeg 3.4 or higher
+* MongoDB 3 or higher
+* nodejs 8.10.0 or higher
+* @angular/cli 1.7 or higher (globally installed: npm install @angular/cli@latest)
 
-## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+# Linux (Ubuntu) Installation and Configuration
+* Install curl if not already installed
+    * sudo apt install curl
 
-## Code scaffolding
+* Install ffmpeg
+    * sudo add-apt-repository ppa:jonathonf/ffmpeg-3  (this is only required if running Ubuntu 18+)
+    * sudo apt install ffmpeg libav-tools x264 x265
+  
+* Install Build Essentials & other system dependencies
+    * sudo apt install libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev build-essential g++
+  
+* Install GIT
+    * apt install git
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+* Install MongoDB
+    * https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
 
-## Build
+* Install NodeJS
+    * curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+    * sudo apt update
+    * sudo apt install -y nodejs
+  
+* Create a directory to store your recordings
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+* Decide where you want to install nvrX, optionally create a user to run nvrX under.
+    * for the purposes of this document, we will assume you are installing into your home folder
+    * cd to your home folder
 
-## Running unit tests
+* Clone this repository (from within your home folder, or wherever you decide to put it), a folder inside this folder will be created called nvrx when you run Clone
+    * git clone https://fuzion9@bitbucket.org/fuzion9/nvrx.git
+    * cd nvrx (enter the newly created directory)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+* Install Dependencies for nvrx (make sure your in the newly cloned directory)
+    * sudo npm install -g @angular/cli@latest
+    * npm install
 
-## Running end-to-end tests
+* Build the front end of the website
+    * ng build --prod
+  
+* Configure mongo database path for nvrX 
+    * in the nvrx directory, modify the file server/conf/config.js (nano server/conf/config.js)
+    * the default url for the database is mongodb://localhost:27017/nvrX
+        * localhost is the machine mongodb runs on
+    	* 27017 is the port mongoDB is listening on, 27017 is the default port, no need to change this unless you have customized your mongo install
+    	* nvrX is the database name to use
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+* Run nvrX
+    * from within the nvrx folder, run: 
+        * env=production node server/bin/www
+    * the line above sets the required environment variable 'env' to production, if using a process manager, this environment variable must also be set using whatever mechanism your process manager uses.
 
-## Further help
+* Optionally install a process manager and configure it launch your node process such as:
+    * PM2
+    * forever
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+# Windows Installation and Configuration
+
+
+
+# Todo
+
+* Create UI For PTZ Configuration
+* Schedule Housekeeping (Complete 
+
+
