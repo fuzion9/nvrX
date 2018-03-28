@@ -114,10 +114,10 @@ function removeOldVideos(retentionDays, pathToClean, next){
                             if (err) return console.log('Error:' + err);
                             if (stat.ctime.getTime() < livesUntil.getTime()) {
                                 deletedCount++;
-                                fs.unlink( filePath, function( err ) {
-                                    if ( err ) return console.log( err );
+                                //fs.unlink( filePath, function( err ) {
+                                //    if ( err ) return console.log( err );
                                     cb();
-                                });
+                                //});
                             } else {
                                 cb();
                             }
