@@ -80,11 +80,9 @@ let self = module.exports = {
     housekeeping: ()=>{
         log.info('\x1B[32m' + '[Begin HouseKeeping]' + '\x1B[39m');
         async.eachSeries(monitors, (monitor, cb)=>{
-            let retentionDays = monitor.recordingRetention;
-            let pathToClean = path.resolve(monitor.calculatedRecordingLocation, monitor.alias);
-            if (retentionDays && retentionDays !== '' && retentionDays !== 0) {
+            if (monitor.recordingRetention && monitor.recordingRetention !== '' && monitor.recordingRetention !== 0) {
                 log.info('\x1B[35m' + '[Begin Removal for '+monitor.alias+']' + '\x1B[39m');
-                removeOldVideos(retentionDays, pathToClean, () => {
+                removeOldVideos(monitor, () => {
                     log.info('\x1B[35m' + '[End Removal for '+monitor.alias+']' + '\x1B[39m');
                     cb();
                 });
@@ -97,43 +95,36 @@ let self = module.exports = {
     }
 };
 
-function removeOldVideos(retentionDays, pathToClean, next){
-    log.info('\x1B[90m' + '[Begin Cleanup of Old Videos in ' + pathToClean +']\x1B[39m');
+function removeOldVideos(m, next){
+    let retentionDays = m.recordingRetention;
+    let pathToClean = path.resolve(m.calculatedRecordingLocation, m.alias);
     let livesUntil = new Date();
-    livesUntil.setHours(livesUntil.getDay() - retentionDays);
-    fs.exists(pathToClean, (exists)=>{
-        if (exists){
-            let deletedCount = 0;
-            fs.readdir( pathToClean, function( err, files ) {
-                if ( err ){
-                    log.error( err );
-                } else {
-                    async.eachSeries(files, (file, cb)=>{
-                        let filePath = path.resolve(pathToClean, file);
-                        fs.stat(filePath, function (err, stat) {
-                            if (err) return console.log('Error:' + err);
-                            if (stat.ctime.getTime() < livesUntil.getTime()) {
-                                deletedCount++;
-                                //fs.unlink( filePath, function( err ) {
-                                //    if ( err ) return console.log( err );
-                                    cb();
-                                //});
-                            } else {
-                                cb();
-                            }
+    livesUntil.setDate(livesUntil.getDate() - retentionDays);
+    console.log('Deleting Videos older than ' + livesUntil);
+    db.query('vids', {date:{$lt:livesUntil}, monitorId:m._id.toString()}, (err, result)=>{
+        console.log(result.length + ' videos to delete');
+        async.eachSeries(result, (vid, cb)=>{
+            db.delete('vids', {_id: vid._id}, (result)=>{
+                let filePath = path.resolve(vid.filename);
+                fs.exists(filePath, (exists)=>{
+                    if (exists){
+                        fs.unlink( filePath, function( err ) {
+                            if ( err ) log.error( err );
+                            cb();
                         });
-                    }, ()=>{
-                        log.info('Deleted ' + deletedCount + ' of '+ files.length +' files.');
-                        next();
-                    });
-                }
+                    } else {
+                        cb();
+                    }
+                });
             });
-        } else {
-            console.log('Path Does not Exist');
+        }, ()=>{
             next();
-        }
+        });
     });
+
+
 }
+
 
 function buildFileLocations(thisMonitor){
     let storageLocation = db.dbConfig.storageLocations.filter((sl)=>{
@@ -148,9 +139,6 @@ function buildFileLocations(thisMonitor){
         thisMonitor.config.motionConfig.calculatedSnapShotLocation = path.resolve(snapShotLocation[0].path, thisMonitor.alias + '.jpg');
     }
 }
-
-
-
 
 function readMonitors(next){
     db.query('monitors', {active: true}, (err, result)=>{

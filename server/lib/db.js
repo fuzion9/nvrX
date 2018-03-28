@@ -27,6 +27,13 @@ let self = module.exports = {
             }
         });
     },
+    delete: (collection, query, next)=>{
+        let col = state.db.collection(collection);
+        col.deleteMany(query, (err, result)=>{
+            if (err) log.error(err);
+            next(result);
+        });
+    },
     query: (collection, query, next) => {
         let col = state.db.collection(collection);
         col.find(query).toArray((err, result) => {
