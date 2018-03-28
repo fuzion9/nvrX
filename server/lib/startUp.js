@@ -10,9 +10,9 @@ let self = module.exports = {
     startup: () => {
         //log.info('\x1B[35m[System Startup]\x1B[39m');
         self.getAvailableHardwareAccellerators();
-        monitors.getAllMonitors((monitors) => {
-            runner.startAllMonitors(monitors, ()=>{
-
+        monitors.getAllMonitors((m) => {
+            runner.startAllMonitors(m, ()=>{
+                monitors.housekeeping();
             });
         });
     },

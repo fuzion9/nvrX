@@ -42,6 +42,7 @@ export class MonitorSettingsComponent implements OnInit {
             hwaccel: this.monitorDetails.config.input.hwaccel,
             rtsp_transport: this.monitorDetails.config.input.rtsp_transport,
             recordLocation: this.monitorDetails.recordLocation,
+            recordingRetention: this.monitorDetails.recordingRetention,
             ssLocation: this.monitorDetails.snapShotLocation,
             vcodec: this.monitorDetails.config.recordOutput.vcodec,
             r: this.monitorDetails.config.recordOutput.r,

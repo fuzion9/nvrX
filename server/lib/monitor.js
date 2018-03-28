@@ -3,6 +3,7 @@ let path = require('path');
 let db = require('../lib/db');
 let log = require('../lib/logger');
 let execSync = require('child_process').execSync;
+let fs = require('fs');
 let monitors = [];
 
 let self = module.exports = {
@@ -75,10 +76,64 @@ let self = module.exports = {
             next(monitors);
         });
 
+    },
+    housekeeping: ()=>{
+        log.info('\x1B[32m' + '[Begin HouseKeeping]' + '\x1B[39m');
+        async.eachSeries(monitors, (monitor, cb)=>{
+            let retentionDays = monitor.recordingRetention;
+            let pathToClean = path.resolve(monitor.calculatedRecordingLocation, monitor.alias);
+            if (retentionDays && retentionDays !== '' && retentionDays !== 0) {
+                log.info('\x1B[35m' + '[Begin Removal for '+monitor.alias+']' + '\x1B[39m');
+                removeOldVideos(retentionDays, pathToClean, () => {
+                    log.info('\x1B[35m' + '[End Removal for '+monitor.alias+']' + '\x1B[39m');
+                    cb();
+                });
+            } else {
+                cb();
+            }
+        },()=>{
+            log.info('\x1B[32m' + '[HouseKeeping Complete - Async Process may will continue to run in the background]' + '\x1B[39m');
+        });
     }
 };
 
-
+function removeOldVideos(retentionDays, pathToClean, next){
+    log.info('\x1B[90m' + '[Begin Cleanup of Old Videos in ' + pathToClean +']\x1B[39m');
+    let livesUntil = new Date();
+    livesUntil.setHours(livesUntil.getDay() - retentionDays);
+    fs.exists(pathToClean, (exists)=>{
+        if (exists){
+            let deletedCount = 0;
+            fs.readdir( pathToClean, function( err, files ) {
+                if ( err ){
+                    log.error( err );
+                } else {
+                    async.eachSeries(files, (file, cb)=>{
+                        let filePath = path.resolve(pathToClean, file);
+                        fs.stat(filePath, function (err, stat) {
+                            if (err) return console.log('Error:' + err);
+                            if (stat.ctime.getTime() < livesUntil.getTime()) {
+                                deletedCount++;
+                                fs.unlink( filePath, function( err ) {
+                                    if ( err ) return console.log( err );
+                                    cb();
+                                });
+                            } else {
+                                cb();
+                            }
+                        });
+                    }, ()=>{
+                        log.info('Deleted ' + deletedCount + ' of '+ files.length +' files.');
+                        next();
+                    });
+                }
+            });
+        } else {
+            console.log('Path Does not Exist');
+            next();
+        }
+    });
+}
 
 function buildFileLocations(thisMonitor){
     let storageLocation = db.dbConfig.storageLocations.filter((sl)=>{

@@ -89,6 +89,7 @@ export class Monitor{
     isRunning : boolean;
     isDisplayed : boolean;
     recordLocation : string;
+    recordingRetention: number;
     snapShotLocation : string;
     alias : string;
     type : string;
