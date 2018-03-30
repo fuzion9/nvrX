@@ -79,5 +79,8 @@ A Network Video Recording system for almost all IP Cameras.
 * Create UI For PTZ Configuration
 * Schedule Housekeeping Operations
 * Create user Manager
+* Fix a problem where things just stop working when token expires (2 hours).  Workaround, refresh the page.
+* Fix a problem where monitor (camera) is not visible after adding a new one.  Workaround, refresh page.
+* Fix a problem where some monitor configuration changes are not reflected in the UI.  Workaround, refresh page.
 
 
