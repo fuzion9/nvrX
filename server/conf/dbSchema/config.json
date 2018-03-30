@@ -7,15 +7,11 @@
     "storageLocations" : [
         {
             "name" : "Main Storage",
-            "path" : "c:\\tmp"
-        },
-        {
-            "name" : "RAM Disk",
-            "path" : "r:\\tmp"
+            "path" : "/tmp"
         }
     ],
     "ff" : {
-        "toolsPath" : "c:\\ffmpeg\\bin",
+        "toolsPath" : "/usr/bin",
         "probeCommand" : "ffprobe",
         "probeFull" : "-v quiet -print_format json -show_format -show_streams",
         "probeMin" : "-v quiet -print_format json -show_format",
@@ -116,5 +112,9 @@
             "value" : 3600
         }
     ],
-    "monitorsPerRow" : 4
+    "monitorsPerRow" : 3,
+    "ssl" : {
+        "enabled" : false,
+        "port" : "8443"
+    }
 }
