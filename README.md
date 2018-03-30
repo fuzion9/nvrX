@@ -64,6 +64,11 @@ A Network Video Recording system for almost all IP Cameras.
     * PM2
     * forever
 
+* Configuration
+    * The default username is: admin@mynvrx.com
+    * The default password is: admin
+    * There is currently no way to configure users without 
+    * After you startup nvrX, the first thing you will want to do is click on the gear icon in the top right corner and make sure the path to your ffmpeg tools is set correctly.  If it is not, set it correctly and restart nvrX
 
 # Windows Installation and Configuration
 
