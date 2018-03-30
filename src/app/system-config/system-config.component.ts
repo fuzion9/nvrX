@@ -15,7 +15,7 @@ export class SystemConfigComponent implements OnInit {
     closeResult: string;
     workingStorageAlias = '';
     workingStoragePath = '';
-    dbConfig = {};
+    dbConfig:any = {};
     monitors = {};
     errorMsg = null;
 

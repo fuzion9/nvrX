@@ -48,13 +48,10 @@
             </ul>
 
             <ul class="nav navbar-nav flex-row">
+                <li class="nav-item navLinkC"><a class="nav-link" (click)="auth.doLogout()">{{auth.user.username}}</a></li>
                 <li class="nav-item navLinkC"><a class="nav-link">
                     <app-system-config></app-system-config>
                 </a></li>
-                <li class="nav-item navLinkC"><a class="nav-link">
-                    <app-monitor-settings launcherStyle="add"></app-monitor-settings>
-                </a></li>
-                <li class="nav-item navLinkC"><a class="nav-link" (click)="auth.doLogout()">{{auth.user.username}}</a></li>
             </ul>
 
         </nav>
@@ -63,7 +60,10 @@
 
         <div class="row" style="border-top:1px solid #000">
             <div class="col-sm-1">
-                <div style="padding-top:10px; margin-bottom: 30px;">Cameras</div>
+                <div style="padding-top:10px; margin-bottom: 30px;">
+                    <span><app-monitor-settings launcherStyle="add"></app-monitor-settings></span>
+                    <span> Cameras</span>
+                </div>
                 <div style="height:100%" dnd-sortable-container [sortableData]="monitorsAvailable"
                      [dropZones]="['cams']">
                     <ul style="list-style-type: none; margin: 0; padding: 0;">

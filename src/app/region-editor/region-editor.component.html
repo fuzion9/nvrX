@@ -52,13 +52,13 @@
     </div>
     <div class="modal-footer">
         <div  style="margin-right: 200px">Selected Pixel Count: {{this.monitorDetails.config.motionConfig.motionAreaPixelCount}}</div>
-        <button type="button" class="btn btn-outline-dark btn-danger" (click)="calculateCoverageArea()">CalcArea</button>
-        <button type="button" class="btn btn-outline-dark btn-success" (click)="saveCoords()">Save</button>
-        <button type="button" class="btn btn-outline-dark btn-danger" (click)="modalRef.hide()">Cancel</button>
+        <!--<button type="button" class="btn btn-warning" (click)="calculateCoverageArea()">CalcArea</button>-->
+        <button type="button" class="btn btn-success" (click)="saveCoords()">Save</button>
+        <button type="button" class="btn btn-danger" (click)="modalRef.hide()">Cancel</button>
     </div>
 </ng-template>
 
-<button (click)="open(content)" class="btn btn-sm btn-dark" style="font-size: 14px" tooltip="Adjust Motion Detection Settings" *ngIf="!FullTextButtonTrigger">
+<button (click)="open(content)" class="btn btn-sm btn-light" style="font-size: 14px;  padding: 0 3px 0 3px; margin: 0" tooltip="Adjust Motion Detection Settings" *ngIf="!FullTextButtonTrigger">
 <i class="fa fa-area-chart" ></i>
 </button>
 

@@ -23,35 +23,37 @@
                  *ngIf="isPlaying && monitorDetails.config.mode !== 'disabled' && monitorDetails.config.motionConfig.enableMotionDetection">
                 <div>
                     Motion Frames:
-                    <bSwitch [switch-size]="'mini'" [(ngModel)]="monitorDetails.config.motionConfig.drawDiffBox"
-                             (onChangeState)="configChange()"></bSwitch>
+                    <ui-switch size="small" [(ngModel)]="monitorDetails.config.motionConfig.drawDiffBox" (Change)="configChange()"></ui-switch>
+
                 </div>
                 <div>
                     Motion Level:
-                    <bSwitch [switch-size]="'mini'" [(ngModel)]="monitorDetails.config.motionConfig.showMotionLevel"
-                             (onChangeState)="configChange()"></bSwitch>
+                    <ui-switch size="small" [(ngModel)]="monitorDetails.config.motionConfig.showMotionLevel" (Change)="configChange()"></ui-switch>
+
                 </div>
             </div>
             <span>
 
-                <div style="font-size:18px; margin-top:-5px">{{monitorDetails.alias}}</div>
-                <i class="fa fa-plug" style="color:grey" *ngIf="!isRunning"></i>
-                <span *ngIf="isRunning">
-                    <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='disabled'"><i
-                        class="fa fa-ban" style="color:red"></i></span>
-                    <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='record'"><i
-                        class="fa fa-circle fa-blink" style="color:red"></i></span>
-                    <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='watch'"><i
-                        class="fa fa-eye" style="color:green"></i></span>
-                </span>
-                <span style="margin-top: -6px;">
+                <div style="font-size:18px; margin-top:-4px; margin-left:-5px">
+                    <i class="fa fa-plug" style="color:grey" *ngIf="!isRunning"></i>
+                    <span *ngIf="isRunning">
+                        <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='disabled'"><i
+                            class="fa fa-ban" style="color:red"></i></span>
+                        <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='record'"><i
+                            class="fa fa-circle fa-blink" style="color:red"></i></span>
+                        <span class="badge badge-pill badge-light" *ngIf="monitorDetails.config.mode=='watch'"><i
+                            class="fa fa-eye" style="color:green"></i></span>
+                    </span>
+                    <span>{{monitorDetails.alias}}</span>
+                </div>
+                <div style="margin-top: -4px; margin-left:19px;">
                     <app-monitor-settings [monitorDetails]="monitorDetails"></app-monitor-settings>
 
                     <app-region-editor [(monitorDetails)]="monitorDetails" (doSave)="doSaveNoRestart($event)"
                                        *ngIf="monitorDetails.config.motionConfig.enableMotionDetection"></app-region-editor>
 
                     <app-video-player [monitor]="monitorDetails"></app-video-player>
-                </span>
+                </div>
             </span>
         </div>
 
@@ -77,18 +79,24 @@
                     <i class="fa fa-5x fa-spinner fa-spin"></i>
                 </div>
             </div>
-            <div id="ptzControls" class="ptzControls" *ngIf="monitorDetails.config.ptz && monitorDetails.config.ptz.enabled">
+            <div id="ptzControls" class="ptzControls"
+                 *ngIf="monitorDetails.config.ptz && monitorDetails.config.ptz.enabled">
                 <table cellpadding="2px" cellspacing="0px" style="text-align: center">
                     <tr>
-                        <td colspan="3"><i class="fa fa-arrow-circle-o-up ptzIcon" (mousedown)="ptzAction('up')" (mouseup)="ptzAction('stop')"></i></td>
+                        <td colspan="3"><i class="fa fa-arrow-circle-o-up ptzIcon" (mousedown)="ptzAction('up')"
+                                           (mouseup)="ptzAction('stop')"></i></td>
                     </tr>
                     <tr>
-                        <td width="25px"><i class="fa fa-arrow-circle-o-left ptzIcon" (mousedown)="ptzAction('left')" (mouseup)="ptzAction('stop')"></i></td>
-                        <td width="25px"><i class="fa fa-circle-o ptzIcon" (mousedown)="ptzAction('stop')" (mouseup)="ptzAction('stop')"></i></td>
-                        <td width="25px"><i class="fa fa-arrow-circle-o-right ptzIcon" (mousedown)="ptzAction('right')" (mouseup)="ptzAction('stop')"></i></td>
+                        <td width="25px"><i class="fa fa-arrow-circle-o-left ptzIcon" (mousedown)="ptzAction('left')"
+                                            (mouseup)="ptzAction('stop')"></i></td>
+                        <td width="25px"><i class="fa fa-circle-o ptzIcon" (mousedown)="ptzAction('stop')"
+                                            (mouseup)="ptzAction('stop')"></i></td>
+                        <td width="25px"><i class="fa fa-arrow-circle-o-right ptzIcon" (mousedown)="ptzAction('right')"
+                                            (mouseup)="ptzAction('stop')"></i></td>
                     </tr>
                     <tr>
-                        <td colspan="3"><i class="fa fa-arrow-circle-o-down ptzIcon" (mousedown)="ptzAction('down')" (mouseup)="ptzAction('stop')"></i></td>
+                        <td colspan="3"><i class="fa fa-arrow-circle-o-down ptzIcon" (mousedown)="ptzAction('down')"
+                                           (mouseup)="ptzAction('stop')"></i></td>
                     </tr>
                 </table>
             </div>
@@ -98,12 +106,13 @@
                     *ngIf="monitorDetails.config.mode != 'disabled'"></canvas>
             <!-- Canvas -->
             <!-- Monitor Disabled -->
-            <div *ngIf="monitorDetails.config.mode === 'disabled'" class="disabledCamera">Camera is disabled</div>
+            <div *ngIf="monitorDetails.config.mode === 'disabled'" class="liveCanvas-{{colSize}} disabledCamera">Camera is disabled</div>
             <!-- Monitor Disabled -->
 
             <div class="pBar" style="padding: 0"
                  [hidden]="(!monitorDetails.config.motionConfig.showMotionLevel || !monitorDetails.config.motionConfig.enableMotionDetection || monitorDetails.config.mode=='disabled')">
-                <progressbar class="progress bg-dark" [value]="stacked" [animate]="true" [striped]="true" [max]="100"></progressbar>
+                <progressbar class="progress bg-dark" [value]="stacked" [animate]="true" [striped]="true"
+                             [max]="100"></progressbar>
                 <!--
 				<progressbar type="warning" class="progress-striped active" [striped]="true" [animate]="true" [value]="stacked">
 					<span [hidden]="confidence < 7">{{confidence}}%</span>

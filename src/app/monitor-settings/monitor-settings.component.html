@@ -328,9 +328,9 @@
         <span>Add new Camera</span>
     </button>
 </span>
-<button (click)="open(content)" class="btn btn-sm btn-dark" style="font-size: 14px;" tooltip="Configure Camera"
+<button (click)="open(content)" class="btn btn-sm btn-light" style="font-size: 14px; padding: 0 4px 0 4px; margin: 0" tooltip="Configure Camera"
         *ngIf="launcherStyle == 'icon'">
     <i class="fa fa-wrench"></i>
 </button>
 <i class="fa fa-plus-circle" (click)="open(content)" *ngIf="launcherStyle == 'add'" tooltip="Add a Monitor"
-   placement="bottom"></i>
+   placement="right"></i>

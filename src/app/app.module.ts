@@ -16,6 +16,7 @@ import {VideoPlayerComponent} from './video-player/video-player.component';
 import {SocketIoModule, SocketIoConfig} from 'ng-socket-io';
 import {JspegComponent} from './jspeg/jspeg.component';
 import {NgxGaugeModule} from 'ngx-gauge';
+import { UiSwitchModule } from 'ngx-toggle-switch';
 import {StreamControlService} from './stream-control.service';
 import {AuthService} from './auth.service';
 import {MonitorsService} from "./monitors.service";
@@ -26,7 +27,7 @@ import {SystemConfigComponent} from './system-config/system-config.component';
 import {TableModule} from 'primeng/table';
 import {PaginatorModule} from 'primeng/paginator';
 import {
-    ModalModule, BsDatepickerModule, ProgressbarComponent, DatepickerModule,
+    ModalModule, BsDatepickerModule,
     ProgressbarModule, TooltipModule,
 } from 'ngx-bootstrap';
 import { TabsModule } from 'ngx-bootstrap/tabs';
@@ -66,6 +67,7 @@ const config: SocketIoConfig = {url: '/', options: {secure: true}};
         TooltipModule.forRoot(),
         TabsModule.forRoot(),
         NgxGaugeModule,
+        UiSwitchModule,
         JWBootstrapSwitchModule,
         TableModule,
         PaginatorModule

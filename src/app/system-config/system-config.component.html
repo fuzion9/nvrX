@@ -3,7 +3,9 @@
         <h4 class="modal-title">
             <i class="fa fa-gears"></i>
             <span>System Configuration</span>
+            <div style="font-size: 10px">Configuration changes to system settings requires a full system restart.</div>
         </h4>
+
         <button type="button" class="close" aria-label="Close" (click)="modalRef.hide()">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -12,83 +14,154 @@
 
         <!-- Form -->
         <form>
-            <fieldset class="form-group">
-                <legend><i class="fa fa-plug"></i> Disk Storage Locations</legend>
-                <hr/>
-                <div class="alert alert-danger" *ngIf="errorMsg">
-                    <i class="fa fa-warning"></i>
-                    <span>{{errorMsg}}</span>
-                </div>
-                <div class="row">
-                    <div class="col-sm-5">
-                        <div class="form-group small">
-                            <label for="storageAlias" class="">Storage Name:</label>
-                            <input id="storageAlias" name="storageAlias" [(ngModel)]="workingStorageAlias"
-                                   class="form-control form-control-sm" type="text">
-
-                            <label for="storagePath" class="">Storage Path:</label>
-                            <div class="input-group">
-                                <input id="storagePath" name="storagePath" [(ngModel)]="workingStoragePath"
-                                       class="form-control form-control-sm" type="text">
-                                <div class="input-group-append">
-
-                                    <app-dir-browser [(currDir)]="workingStoragePath"></app-dir-browser>
+            <tabset #staticTabs>
+                <tab>
+                    <ng-template tabHeading><span class="tabHeader"><i class="fa fa-plug"></i> Server Settings</span></ng-template>
+                    <br/>
+                    <fieldset class="form-group">
+                        <legend><i class="fa fa-plug"></i> Server Settings</legend>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group small">
+                                    <label for="httpPort" class="">HTTP Port:</label>
+                                    <input id="httpPort" name="httpPort" [(ngModel)]="dbConfig.serverPort"
+                                           class="form-control form-control-sm" type="text">
+                                    <span class="helpFont">Choose the port to run the server on.  Ignored if SSL is enabled </span>
                                 </div>
                             </div>
-                            <button class="btn btn-sm btn-success" style="margin: 3px;"
-                                    (click)="addLocation()">Add New Location
-                            </button>
                         </div>
-                    </div>
-
-                    <div class="offset-2 col-sm-5">
-                        <div style="margin-top: 20px;">
-                            <span>Configured Locations:</span>
-                            <ul>
-                                <li *ngFor="let l of dbConfig.storageLocations; let i=index ">
-                                    <span>{{l.name}} ({{l.path}})</span>
-                                    <i class="fa fa-remove alert-danger" style="margin-left:10px"
-                                       (click)="removeLocation(i)"></i>
-                                </li>
-                            </ul>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group small">
+                                    <label for="enableSSL" class="">Enable SSL:</label>
+                                    <select id="enableSSL" name="enableSSL" [(ngModel)]="dbConfig.ssl.enabled"
+                                            class="form-control form-control-sm">
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="form-group">
-                <legend><i class="fa fa-file-video-o"></i> ffMpeg Options</legend>
-                <hr/>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="form-group small">
-                            <label for="toolsPath" class="">Path to ffmpeg Binaries:</label>
-                            <input id="toolsPath" name="toolsPath" [(ngModel)]="dbConfig.ff.toolsPath"
-                                   class="form-control form-control-sm" type="text">
-                            <span class="helpFont">Linux -> ie:(/usr/local/bin), Windows -> Wherever you unzipped it... ie:(c:\ffmpeg\bin) </span>
+                        <div *ngIf="dbConfig.ssl.enabled">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group small">
+                                        <label for="httpsPort" class="">HTTPS Port:</label>
+                                        <input id="httpsPort" name="httpsPort" [(ngModel)]="dbConfig.ssl.port"
+                                               class="form-control form-control-sm" type="text">
+                                        <span class="helpFont">Choose the port to run the server on.  If SSL is configured, HTTP Port is ignored. </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <ul>
+                                        <li>Certs directory: &lt;nvrx root folder&gt;/server/ssl</li>
+                                        <li>Cert bundle file: bundle.ca-bundle</li>
+                                        <li>Certificate file: certificate.crt</li>
+                                        <li>Private Key file: private.key</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </fieldset>
+                    </fieldset>
 
-            <fieldset class="form-group">
-                <legend><i class="fa fa-video-camera"></i> Known Cameras</legend>
-                <span class="small">This is a full Deactivation/Activation of a camera, when de-activated the system will completely ignore this camera.  Changes here will require a full system restart.  You can quickly disable a camera from its setup screen.</span>
-                <hr/>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div *ngFor="let m of monitors; let i=index" style="width:300px">
+
+                    <fieldset class="form-group">
+                        <legend><i class="fa fa-h-square"></i> Storage Settings</legend>
+                        <div class="alert alert-danger" *ngIf="errorMsg">
+                            <i class="fa fa-warning"></i>
+                            <span>{{errorMsg}}</span>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="form-group small">
+                                    <label for="storageAlias" class="">Storage Name:</label>
+                                    <input id="storageAlias" name="storageAlias" [(ngModel)]="workingStorageAlias"
+                                           class="form-control form-control-sm" type="text">
+
+                                    <label for="storagePath" class="">Storage Path:</label>
+                                    <div class="input-group">
+                                        <input id="storagePath" name="storagePath" [(ngModel)]="workingStoragePath"
+                                               class="form-control form-control-sm" type="text">
+                                        <div class="input-group-append">
+
+                                            <app-dir-browser [(currDir)]="workingStoragePath"></app-dir-browser>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-success" style="margin: 3px;"
+                                            (click)="addLocation()">Add New Location
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="offset-2 col-sm-5">
+                                <div style="margin-top: 20px;">
+                                    <span>Configured Locations:</span>
+                                    <ul>
+                                        <li *ngFor="let l of dbConfig.storageLocations; let i=index ">
+                                            <span>{{l.name}} ({{l.path}})</span>
+                                            <i class="fa fa-remove alert-danger" style="margin-left:10px"
+                                               (click)="removeLocation(i)"></i>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </tab>
+
+                <tab>
+                    <ng-template tabHeading><i class="fa fa-user"></i> User Manager</ng-template>
+                    <br/>
+                    <fieldset class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                User manager is not yet implemented, changes can be made directly in the mongo users collection if required.  Passwords are bcrypted.  An online calculator for bcrypt can be found here: https://www.dailycred.com/article/bcrypt-calculator
+                            </div>
+                        </div>
+                    </fieldset>
+                </tab>
+
+
+                <tab>
+                    <ng-template tabHeading><i class="fa fa-file-video-o"></i> ffMpeg Options</ng-template>
+                    <br/>
+                    <fieldset class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group small">
+                                    <label for="toolsPath" class="">Path to ffmpeg Binaries:</label>
+                                    <input id="toolsPath" name="toolsPath" [(ngModel)]="dbConfig.ff.toolsPath"
+                                           class="form-control form-control-sm" type="text">
+                                    <span class="helpFont">Linux -> ie:(/usr/local/bin), Windows -> Wherever you unzipped it... ie:(c:\ffmpeg\bin) </span>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </tab>
+                <tab>
+                    <ng-template tabHeading><i class="fa fa-video-camera"></i> Known Cameras</ng-template>
+                    <br/>
+                    <fieldset class="form-group">
+                        <span class="small">This is a full Deactivation/Activation of a camera, when de-activated the system will completely ignore this camera.  Changes here will require a full system restart.  You can quickly disable a camera from its setup screen.</span>
+                        <hr/>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div *ngFor="let m of monitors; let i=index" style="width:300px">
                                         <span><input id="{{i}}" name="{{i}}" type="checkbox"
                                                      [(ngModel)]="m.active"/></span>
-                            <span>{{m.alias}}</span>
+                                    <span>{{m.alias}}</span>
+                                </div>
+
+                                <ul>
+
+                                </ul>
+                            </div>
                         </div>
-
-                        <ul>
-
-                        </ul>
-                    </div>
-                </div>
-            </fieldset>
+                    </fieldset>
+                </tab>
+            </tabset>
         </form>
 
 
@@ -98,8 +171,9 @@
     <div class="modal-footer">
         <div class="row" style="width: 100%">
             <div class="col-sm-5">
-                <button type="button" class="btn btn-warning" (click)="doHouseKeeping()"
-                        tooltip="Remove videos older than each cameras retention period.">Perform Housekeeping</button>
+                <button type="button" class="btn btn-dark" (click)="doHouseKeeping()" style="margin-left:-30px"
+                        tooltip="Remove videos older than each cameras retention period.">Perform Housekeeping
+                </button>
             </div>
             <div class="col-sm-7 text-md-right">
                 <button type="button" class="btn btn-success" (click)="save()">Save</button>
@@ -108,8 +182,6 @@
         </div>
     </div>
 </ng-template>
-<span>
-    <span (click)="open(content)">
-        <i class="fa fa-gears" tooltip="System Configuration" placement="bottom"></i>
-    </span>
-</span>
+<button (click)="open(content)" class="btn btn-light" style="font-size: 16px;  padding: 0 5px 0 5px; margin: 0" tooltip="System Configuration" placement="bottom" *ngIf="!FullTextButtonTrigger">
+    <i class="fa fa-gear" ></i>
+</button>
