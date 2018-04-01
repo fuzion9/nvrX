@@ -65,7 +65,7 @@ export class MonitorsService {
     configChange(type, monitorId, monitorDetails) {
         this.busy.next({id:monitorId, value: true});
         this.http.post('/api/updateMonitor/'+type + '/' + monitorId, monitorDetails, this.auth.httpOptions).subscribe(data => {
-            //console.log(data['monitorDetails'].config.motionConfig);
+            console.log(data['monitorDetails'].config.motionConfig);
         });
     }
 

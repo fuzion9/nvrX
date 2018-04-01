@@ -65,6 +65,7 @@ router.post('/updateSystemConfig', function (req, res) {
 
 router.post('/updateMonitor/:type/:id', function (req, res) {
     log.info('\x1B[35m[Soft Update Monitor: ' + req.params.type + ']\x1B[39m');
+    console.log('DiffBox: ' + req.body.config.motionConfig.drawDiffBox);
     monitors.updateMonitor(req.body, (err, m) => {
         if (err) {
             res.json({result: false, monitorDetails: req.body});

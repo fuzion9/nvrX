@@ -22,14 +22,12 @@
             <div class="float-md-right" style="font-size: 14px; text-align: right"
                  *ngIf="isPlaying && monitorDetails.config.mode !== 'disabled' && monitorDetails.config.motionConfig.enableMotionDetection">
                 <div>
-                    Motion Frames:
-                    <ui-switch size="small" [(ngModel)]="monitorDetails.config.motionConfig.drawDiffBox" (Change)="configChange()"></ui-switch>
-
+                    <bSwitch [switch-size]="'mini'" [(ngModel)]="monitorDetails.config.motionConfig.drawDiffBox" switch-on-color="warning"
+                             (onChangeState)="configChange()" tooltip="Show Motion Detection Canvas"></bSwitch>
                 </div>
                 <div>
-                    Motion Level:
-                    <ui-switch size="small" [(ngModel)]="monitorDetails.config.motionConfig.showMotionLevel" (Change)="configChange()"></ui-switch>
-
+                    <bSwitch [switch-size]="'mini'" [(ngModel)]="monitorDetails.config.motionConfig.showMotionLevel" switch-on-color="warning"
+                             (onChangeState)="configChange()" tooltip="Show Motion Meter"></bSwitch>
                 </div>
             </div>
             <span>
