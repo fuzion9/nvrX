@@ -89,6 +89,26 @@ router.get('/monitorList', function (req, res) {
     res.json(monitors.getCurrentMonitors());
 });
 
+router.get('/userList', function (req, res) {
+    db.query('users', {}, (err, users)=>{
+        res.json(users);
+    });
+});
+
+router.get('/deleteUser/:id', function (req, res) {
+    db.deleteUser(req.params.id, (err, result)=>{
+        res.json(result);
+    });
+});
+
+
+router.post('/addOrUpdateUser', function (req, res) {
+    let user = req.body;
+    db.addOrUpdateUser(user, ()=>{
+        res.json({});
+    });
+});
+
 router.get('/getEveryKnownMonitor', function (req, res) {
     db.query('monitors', {}, (err, result) => {
         res.json(result);

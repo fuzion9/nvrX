@@ -4,6 +4,7 @@ import {Observable} from "rxjs/Observable";
 import 'rxjs/add/observable/of';
 import {AuthService} from "./auth.service";
 import {Subject} from "rxjs/Subject";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 @Injectable()
 export class SystemConfigService {
@@ -11,6 +12,7 @@ export class SystemConfigService {
     monitors: any = {};
     changeSubject = new Subject();
     auth: AuthService;
+    userList:BehaviorSubject<any> = new BehaviorSubject([]);
 
     constructor(private http: HttpClient, private a: AuthService) {
         this.auth = a;
@@ -30,6 +32,26 @@ export class SystemConfigService {
             })
         });
 
+    }
+
+    getUsers(){
+        this.http.get('/api/userList', this.auth.httpOptions).subscribe(data => {
+            this.userList.next(data);
+        });
+    }
+
+    addOrUpdateUser(user){
+        console.log('Performing Save');
+        this.http.post('/api/addOrUpdateUser', user, this.auth.httpOptions).subscribe(data => {
+            this.getUsers();
+        });
+    }
+
+    deleteUser(id){
+        console.log('Performing Save');
+        this.http.get('/api/deleteUser/' + id, this.auth.httpOptions).subscribe(data => {
+            this.getUsers();
+        });
     }
 
     doHouseKeeping(){

@@ -11,12 +11,12 @@
         </button>
     </div>
     <div class="modal-body">
-
         <!-- Form -->
         <form>
             <tabset #staticTabs>
-                <tab>
-                    <ng-template tabHeading><span class="tabHeader"><i class="fa fa-plug"></i> Server Settings</span></ng-template>
+                <tab (select)="tabChange('serverSettings')">
+                    <ng-template tabHeading><span class="tabHeader"><i class="fa fa-plug"></i> Server Settings</span>
+                    </ng-template>
                     <br/>
                     <fieldset class="form-group">
                         <legend><i class="fa fa-plug"></i> Server Settings</legend>
@@ -110,21 +110,130 @@
                         </div>
                     </fieldset>
                 </tab>
-
-                <tab>
+                <tab (select)="tabChange('users')">
                     <ng-template tabHeading><i class="fa fa-user"></i> User Manager</ng-template>
                     <br/>
                     <fieldset class="form-group">
                         <div class="row">
                             <div class="col-sm-12">
-                                User manager is not yet implemented, changes can be made directly in the mongo users collection if required.  Passwords are bcrypted.  An online calculator for bcrypt can be found here: https://www.dailycred.com/article/bcrypt-calculator
+                                <!-- User Table -->
+                                <p-table [value]="userList.value" selectionMode="single" [(selection)]="selectedUser"
+                                         dataKey="_id" [paginator]="true" [rows]="10">
+                                    <ng-template pTemplate="header">
+                                        <tr class="tableHeader" [pSelectableRow]="r">
+                                            <th>FirstName</th>
+                                            <th>LastName</th>
+                                            <th>Username</th>
+                                            <th>Access Level</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-r>
+                                        <tr class="tableCell" (click)="editUser(r)" [pSelectableRow]="r">
+                                            <td>
+                                                <i class="fa fa-edit" style="margin-right: 10px; color: #c69500"></i>
+                                                {{r.firstName}}
+                                            </td>
+                                            <td>{{r.lastName}}</td>
+                                            <td>{{r.login}}</td>
+                                            <td>{{getAccessLevelText(r.authLevel)}}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                                <!-- End User Table -->
+                                <div class="card bg-dark" style="margin-top:20px; padding: 0px">
+                                    <div class="card-header">{{userEditMode}}
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-danger" (click)="deleteUser()" *ngIf="userEditModeButton !== 'Save New User'">DELETE USER</button>
+                                        <button type="button" class="btn btn-success" (click)="saveUser()">{{userEditModeButton}}</button>
+                                        <button type="button" class="btn btn-warning" (click)="cancelEdit()">Cancel</button>
+                                    </div>
+                                    </div>
+                                    <div class="card-body center" >
+                                        <table style="margin-left: 50px;">
+                                            <tr>
+
+                                            <td>
+                                                <div class="form-group small">
+                                                    <label for="userName" class="">User Name:</label>
+                                                    <input id="userName" name="userName"
+                                                           [(ngModel)]="selectedUser.login"
+                                                           class="form-control form-control-sm" type="text">
+                                                </div>
+                                            </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="form-group small">
+                                                        <label for="firstName" class="">First Name:</label>
+                                                        <input id="firstName" name="firstName"
+                                                               [(ngModel)]="selectedUser.firstName"
+                                                               class="form-control form-control-sm" type="text">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group small">
+                                                        <label for="lastName" class="">Last Name:</label>
+                                                        <input id="lastName" name="lastName"
+                                                               [(ngModel)]="selectedUser.lastName"
+                                                               class="form-control form-control-sm" type="text">
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="form-group small">
+                                                        <label for="accessLevel" class="">Access Level:</label>
+                                                        <select id="accessLevel" name="enableSSL"
+                                                                [(ngModel)]="selectedUser.authLevel"
+                                                                class="form-control form-control-sm">
+                                                            <option value="10">Administrator</option>
+                                                            <option value="5">Standard User (View Only)</option>
+                                                            <option value="1">Terminal User (Not Currently Used)
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="form-group small">
+                                                        <label for="password1" class="">Password:</label>
+                                                        <input id="password1" name="password1" style="width: 270px"
+                                                               [(ngModel)]="selectedUser.newPassword1"
+                                                               class="form-control form-control-sm" type="password">
+                                                    </div>
+                                                </td>
+                                                <td colspan="2">
+                                                    <div class="form-group small">
+                                                        <label for="password" class="">Confirm Password:</label>
+                                                        <input id="password" name="password2" style="width: 270px"
+                                                               [(ngModel)]="selectedUser.newPassword2"
+                                                               class="form-control form-control-sm" type="password">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    &nbsp;
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5">
+                                                    <div *ngIf="userEditModeButton !== 'Save New User'" style="padding: 10px; font-size: 12px; vertical-align: middle">
+                                                        <i class="fa fa-arrow-up"></i> Leave password blank if you do not want to change it.
+                                                    </div>
+                                                    <div *ngIf="userErrors.length > 0">
+                                                        <ul>
+                                                            <li *ngFor="let e of userErrors">{{e}}</li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </fieldset>
                 </tab>
-
-
-                <tab>
+                <tab (select)="tabChange('ffmpeg')">
                     <ng-template tabHeading><i class="fa fa-file-video-o"></i> ffMpeg Options</ng-template>
                     <br/>
                     <fieldset class="form-group">
@@ -140,7 +249,7 @@
                         </div>
                     </fieldset>
                 </tab>
-                <tab>
+                <tab (select)="tabChange('known')">
                     <ng-template tabHeading><i class="fa fa-video-camera"></i> Known Cameras</ng-template>
                     <br/>
                     <fieldset class="form-group">
@@ -168,7 +277,7 @@
         <!-- End Form-->
 
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" *ngIf="!hideFooter">
         <div class="row" style="width: 100%">
             <div class="col-sm-5">
                 <button type="button" class="btn btn-dark" (click)="doHouseKeeping()" style="margin-left:-30px"
@@ -182,6 +291,7 @@
         </div>
     </div>
 </ng-template>
-<button (click)="open(content)" class="btn btn-light" style="font-size: 16px;  padding: 0 5px 0 5px; margin: 0" tooltip="System Configuration" placement="bottom">
-    <i class="fa fa-gear" ></i>
+<button (click)="open(content)" class="btn btn-light" style="font-size: 16px;  padding: 0 5px 0 5px; margin: 0"
+        tooltip="System Configuration" placement="bottom">
+    <i class="fa fa-gear"></i>
 </button>

@@ -2,6 +2,7 @@ let mongoClient = require('mongodb').MongoClient;
 let ObjectID = require('mongodb').ObjectID;
 let state = {db: null, status: 'Disconnected'};
 let log = require('../lib/logger');
+let bcrypt = require('bcrypt');
 
 let self = module.exports = {
     dbConfig: {},
@@ -161,5 +162,51 @@ let self = module.exports = {
                 next(err);
             });
         }
+    },
+
+    deleteUser:(id, next)=>{
+        let col = state.db.collection('users');
+        col.findOneAndDelete({_id:ObjectID(id)}, (err, result)=>{
+            next();
+        });
+    },
+
+    cryptPassword:(password, next)=>{
+        if (password){
+            bcrypt.hash(password, 4, (err, hash)=>{
+                next(hash);
+            });
+        } else {
+            next();
+        }
+    },
+
+    addOrUpdateUser: (user, next)=>{
+        let col = state.db.collection('users');
+        self.cryptPassword(user.newPassword1, (password)=>{
+            if (password){ user.password = password; }
+            if (user._id){
+                console.log('Update User');
+                let id = ObjectID(user._id);
+                delete user._id;
+                col.findOneAndUpdate({_id: id}, user, (err, result)=>{
+                    if (err){
+                        log.info(err);
+                    }
+                    next();
+                });
+
+            } else {
+                console.log('Insert New User');
+                col.insertOne(user, (err, result)=>{
+                    if (err){
+                        log.info(err);
+                    }
+                    next();
+                });
+            }
+        //console.log(user);
+        });
     }
+
 };

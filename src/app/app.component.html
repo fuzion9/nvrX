@@ -48,7 +48,10 @@
             </ul>
 
             <ul class="nav navbar-nav flex-row">
-                <li class="nav-item navLinkC"><a class="nav-link" (click)="auth.doLogout()">{{auth.user.username}}</a></li>
+                <li class="nav-item navLinkC"><a class="nav-link" (click)="auth.doLogout()" tooltip="Log Out" placement="bottom">
+                    <i class="fa fa-sign-out"></i>
+                    <span>{{auth.user.username}}</span>
+                </a></li>
                 <li class="nav-item navLinkC"><a class="nav-link">
                     <app-system-config></app-system-config>
                 </a></li>
