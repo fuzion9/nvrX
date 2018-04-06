@@ -152,16 +152,6 @@
                                         <table style="margin-left: 50px;">
                                             <tr>
 
-                                            <td>
-                                                <div class="form-group small">
-                                                    <label for="userName" class="">User Name:</label>
-                                                    <input id="userName" name="userName"
-                                                           [(ngModel)]="selectedUser.login"
-                                                           class="form-control form-control-sm" type="text">
-                                                </div>
-                                            </td>
-                                            </tr>
-                                            <tr>
                                                 <td>
                                                     <div class="form-group small">
                                                         <label for="firstName" class="">First Name:</label>
@@ -178,17 +168,41 @@
                                                                class="form-control form-control-sm" type="text">
                                                     </div>
                                                 </td>
-
-                                                <td>
+                                                <td colspan="3">
                                                     <div class="form-group small">
-                                                        <label for="accessLevel" class="">Access Level:</label>
-                                                        <select id="accessLevel" name="enableSSL"
-                                                                [(ngModel)]="selectedUser.authLevel"
-                                                                class="form-control form-control-sm">
+                                                        <label for="userName" class="">User Name:</label>
+                                                        <input id="userName" name="userName"
+                                                               [(ngModel)]="selectedUser.login"
+                                                               class="form-control form-control-sm" type="text">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="form-group small">
+                                                        <label for="accessLevel" class="">{{selectedUser.authLevel}} {{tauth}} | Access Level:</label>
+                                                        <select id="accessLevel" name="accessLevel" [(ngModel)]="selectedUser.authLevel" class="form-control form-control-sm">
                                                             <option [ngValue]="10">Administrator</option>
                                                             <option [ngValue]="5">Standard User (View Only)</option>
                                                             <option [ngValue]="1">Terminal User (Not Currently Used)
                                                             </option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td colspan="2">
+                                                    <div class="form-group small">
+                                                        <label for="tokenLength" class="">Login Timeout:</label>
+                                                        <select id="tokenLength" name="enableSSL"
+                                                                [(ngModel)]="selectedUser.expiryTime"
+                                                                class="form-control form-control-sm">
+                                                            <option [ngValue]="1800">30 Minutes</option>
+                                                            <option [ngValue]="3600">1 Hour</option>
+                                                            <option [ngValue]="7200">2 Hours</option>
+                                                            <option [ngValue]="14400">4 Hours</option>
+                                                            <option [ngValue]="43200">12 Hours</option>
+                                                            <option [ngValue]="86400">24 Hours</option>
+                                                            <option [ngValue]="172800">48 Hours</option>
+                                                            <option [ngValue]="31536000">1 Year</option>
                                                         </select>
                                                     </div>
                                                 </td>

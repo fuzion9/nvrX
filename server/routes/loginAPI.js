@@ -14,16 +14,17 @@ router.post('/', function(req, res) {
             log.info('Login Result: ');
             //console.log(result);
             let tokenExpires = moment();
-
-            tokenExpires.add(config.jwtConfig.expiryTime, 'seconds');
+            let expTime = config.jwtConfig.expiryTime;
+            if (result.expiryTime) { expTime = result.expiryTime; }
+            tokenExpires.add(expTime, 'seconds');
             let token = {
                 id: result._id,
                 username: result.login,
                 sortOrder: result.sortOrder,
-                expires: tokenExpires.toString(),
+                expires: tokenExpires.format(),
                 jwt: jwt.sign({
                     id: 1,
-                }, config.jwtConfig.JWT_SECRET, {expiresIn: config.jwtConfig.expiryTime})
+                }, config.jwtConfig.JWT_SECRET, {expiresIn: expTime})
             };
             req.session.jwtToken = token;
             res.json(token);

@@ -189,6 +189,8 @@ let self = module.exports = {
                 console.log('Update User');
                 let id = ObjectID(user._id);
                 delete user._id;
+                delete user.newPassword1;
+                delete user.newPassword2;
                 col.findOneAndUpdate({_id: id}, user, (err, result)=>{
                     if (err){
                         log.info(err);

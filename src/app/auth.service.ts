@@ -8,7 +8,23 @@ export class AuthService {
     isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     user: any = {};
     loginStatus: BehaviorSubject<string> = new BehaviorSubject(null);
-    httpOptions = {headers: null};
+    secondsTillTokenExpires = 0;
+    private _httpOptions = {headers: null};
+    get httpOptions(){
+        let now = new Date();
+        //console.log(now);
+        let expires = new Date(this.user.expires);
+        //console.log(expires);
+        let secondsTillTokenExpires = expires.getTime() - now.getTime(); // / 1000;
+        //console.log('Token Expires in ' + AuthService.convertMillisToTime(secondsTillTokenExpires) + ' seconds. [' + secondsTillTokenExpires +']');
+        if (now > expires) {
+            //console.log('Token Expired');
+            this.doLogout();
+            return null;
+        } else {
+            return this._httpOptions;
+        }
+    }
 
     constructor(private http: HttpClient) {
         this.readLocalStorage();
@@ -18,7 +34,7 @@ export class AuthService {
             if (now > expires) {
                 this.doLogout();
             } else {
-                this.httpOptions.headers = new HttpHeaders({
+                this._httpOptions.headers = new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': this.user.jwt
                 });
@@ -39,21 +55,26 @@ export class AuthService {
         document.location.href = document.location.href;
     }
 
+    setUserDataFromLogin(data){
+        this.user = data;
+        console.log(data);
+    }
+
     doLogin(u, p) {
         this.http.post<any>('/loginAPI', {username: u, password: p}).subscribe(data => {
                 console.log('Login Successful');
                 this.setLocalStorage(data);
-                this.httpOptions.headers = new HttpHeaders({
+                this._httpOptions.headers = new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': data.jwt
                 });
-                this.user = data;
+                this.setUserDataFromLogin(data);
                 this.isLoggedIn.next(true);
             },
             response => {
                 if (response.status === 401) {
                     this.loginStatus.next('Unauthorized: Bad username or password.');
-                    this.httpOptions.headers = {};
+                    this._httpOptions.headers = {};
                     localStorage.clear();
                     this.user = {};
                 } else {
@@ -77,6 +98,17 @@ export class AuthService {
         localStorage.setItem('tokenDate', data.tokenDate);
         localStorage.setItem('username', data.username);
         localStorage.setItem('jwt', data.jwt);
+    }
+
+    static convertMillisToTime(millis){
+        let delim = " ";
+        let hours = Math.floor(millis / (1000 * 60 * 60) % 60);
+        let minutes = Math.floor(millis / (1000 * 60) % 60);
+        let seconds = Math.floor(millis / 1000 % 60);
+        let h = hours < 10 ? '0' + hours : hours;
+        let m = minutes < 10 ? '0' + minutes : minutes;
+        let s = seconds < 10 ? '0' + seconds : seconds;
+        return h + 'h'+ delim + m + 'm' + delim + s + 's';
     }
 
 }

@@ -69,6 +69,7 @@ export class JspegComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.monitorService.currentMonitors[this.monitorId].subscribe((mDetails) => {
             this.monitorDetails = mDetails;
+            this.stacked = [];
             this.stacked.push({value:mDetails.config.motionConfig.eventTriggerPercent, type:'warning', label:mDetails.config.motionConfig.eventTriggerPercent + '%'});
             this.stacked.push({value:0, type:'danger', label:''});
             if (mDetails.isDisplayed) {

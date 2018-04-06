@@ -25,6 +25,7 @@ export class SystemConfigComponent implements OnInit {
     userEditMode:string = 'Add New User';
     userEditModeButton:string = 'Save New User';
     userErrors = [];
+    tauth = '';
 
     constructor(private modalService: BsModalService, private systemConfigService: SystemConfigService) {
         this.scs = systemConfigService;
@@ -86,6 +87,7 @@ export class SystemConfigComponent implements OnInit {
     editUser(){
         this.userEditMode = 'Edit User: ' + this.selectedUser.firstName + ' ' + this.selectedUser.lastName;
         this.userEditModeButton = 'Save Changes';
+        this.tauth = typeof this.selectedUser.authLevel;
     }
 
     cancelEdit(){
@@ -95,12 +97,14 @@ export class SystemConfigComponent implements OnInit {
     }
 
     getAccessLevelText(level){
-        if (level === 10){
+        if (level == 10){
             return 'Administrator'
         } else if (level == 5){
             return 'Standard User';
         } else if (level ==1) {
             return 'Terminal User';
+        } else {
+            return 'Unknown ('+level+')';
         }
 
     }
