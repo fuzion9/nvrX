@@ -5,6 +5,7 @@ let execSync = require('child_process').execSync;
 let monitors = require('../lib/monitor');
 let runner = require('../lib/monitorRunner');
 let fs = require('fs');
+let houseKeepingInterval = 43200000;
 
 let self = module.exports = {
     startup: () => {
@@ -13,6 +14,10 @@ let self = module.exports = {
         monitors.getAllMonitors((m) => {
             runner.startAllMonitors(m, ()=>{
                 monitors.housekeeping();
+                log.info('HouseKeeping interval set to: ' + houseKeepingInterval);
+                setInterval(()=>{
+                    monitors.housekeeping();
+                }, houseKeepingInterval);
             });
         });
     },

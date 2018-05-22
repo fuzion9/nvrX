@@ -21,8 +21,8 @@ router.get('/doHouseKeeping', function (req, res) {
 });
 
 router.get('/getLatestUserData', function (req, res) {
-    console.log('Get Latest User Data');
-    console.log(req.session.jwtToken);
+    //console.log('Get Latest User Data');
+    //console.log(req.session.jwtToken);
     db.query('users', {_id:ObjectID(req.session.jwtToken.id)}, (err, result)=>{
         let now = new Date();
         let exp = new Date(req.session.jwtToken.expires);
