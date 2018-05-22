@@ -11,12 +11,15 @@ let bcrypt = require('bcrypt');
 router.post('/', function(req, res) {
     tryLogin(req.body.username, req.body.password, (err, result)=>{
         if(!err) {
+            //31536000
             log.info('Login Result: ');
-            //console.log(result);
+            console.log(result);
             let tokenExpires = moment();
             let expTime = config.jwtConfig.expiryTime;
             if (result.expiryTime) { expTime = result.expiryTime; }
+            console.log('Token Expiration Time: ' + expTime);
             tokenExpires.add(expTime, 'seconds');
+            console.log('Token Expiration date: ' + tokenExpires.format());
             let token = {
                 id: result._id,
                 username: result.login,

@@ -203,7 +203,8 @@ function spawnMonitorProcess(thisMonitor, startupCommand){
 
     let process = spawn(startupCommand.cmd, startupCommand.options, {detached: db.dbConfig.ff.runMonitorsDetached});
     thisMonitor.pid = process.pid;
-    process.on('error', (err)=>{log.error(err);}); //dump process error to log
+    log.info('Spawning new Process: ' + startupCommand.cmd + ' ' + startupCommand.options.join(' '));
+    process.on('error', (err)=>{log.error('FFMpeg Real Error Output: ' + err);}); //dump process error to log
     process.stderr.on('data', (e)=>{processAnnoyingffmpegOutput(e, thisMonitor._id, thisMonitor.alias);}); //process stderr
     process.stdout.on('data', (e)=>{processStdOut(e.toString(), thisMonitor.calculatedRecordingLocation, thisMonitor._id, thisMonitor.alias);}); //process stdout
     process.stdout.on('close', (code)=>{
@@ -339,7 +340,7 @@ function processAnnoyingffmpegOutput(err, id, alias){
     } else if (err.indexOf('Guessed Channel Layout for Input') > -1) {
         //log.error('FFMpeg Fail: ' +err);
     } else {
-        log.error(err);
+        log.error('[processAnnoyingffmpegOutput] Error: ' + err);
     }
 
 }

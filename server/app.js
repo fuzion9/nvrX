@@ -42,6 +42,7 @@ app.use('/api', require('./lib/middlewares/auth'));
 app.use('/api', require('./routes/api'));
 app.use('/streamIn', require('./routes/streamIn'));
 app.use('/loginAPI', require('./routes/loginAPI'));
+app.use('/st', require('./routes/smartthingsAPI'));
 //handoff any static files to angular build directory
 app.use(express.static(path.join(__dirname, '../dist')));
 //handoff any requests without a file to angulars index.html file

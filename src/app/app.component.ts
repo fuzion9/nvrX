@@ -51,6 +51,8 @@ export class AppComponent {
                     this.monitorsDisplayed = this.a.user.sortOrder;
                 }
             }
+            //console.log(this.monitorsDisplayed);
+            //console.log(this.monitorsAvailable);
         });
     }
 
@@ -60,7 +62,7 @@ export class AppComponent {
     }
 
     activate($event: any) {
-        console.log(this.monitorsDisplayed);
+        //console.log(this.monitorsDisplayed);
         this.monitorService.setDisplay($event, true, this.monitorsDisplayed);
     }
 

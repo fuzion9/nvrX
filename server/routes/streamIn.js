@@ -47,23 +47,32 @@ router.all('/:feed', function (req, res) {
 });
 
 router.get('/diffImage/:id', function (req, res) {
-    try {
-        let verify = jwt.verify(req.session.jwtToken.jwt, db.dbConfig.jwtConfig.JWT_SECRET);
-        let monitor = runner.getMonitor(req.params.id);
-        let file = monitor.config.motionConfig.calculatedSnapShotLocation + '.diff.jpg';
-        fs.readFile(file, (err, data) => {
-            if (err) log.error(err);
-            res.writeHead(200, {'Content-Type': 'image/jpg'});
-            res.end(data, 'binary');
-        });
-    } catch (e) {
-        console.log(e);
+    if (!req.session.jwtToken){
         return res.status(401).json({
             error: {
                 msg: 'Failed to authenticate token!',
-                e: e
+                e: 'No session token found.'
             }
         });
+    } else {
+        try {
+            let verify = jwt.verify(req.session.jwtToken.jwt, db.dbConfig.jwtConfig.JWT_SECRET);
+            let monitor = runner.getMonitor(req.params.id);
+            let file = monitor.config.motionConfig.calculatedSnapShotLocation + '.diff.jpg';
+            fs.readFile(file, (err, data) => {
+                if (err) log.error(err);
+                res.writeHead(200, {'Content-Type': 'image/jpg'});
+                res.end(data, 'binary');
+            });
+        } catch (e) {
+            console.log(e);
+            return res.status(401).json({
+                error: {
+                    msg: 'Failed to authenticate token!',
+                    e: e
+                }
+            });
+        }
     }
 });
 

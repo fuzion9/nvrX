@@ -135,6 +135,7 @@ let self = module.exports = {
     },
     connect: (url, next) => {
         if (state.db) return next();
+        log.info('Connecting to mongodb @ ' + url);
         mongoClient.connect(url, function (err, db) {
             if (err) {
                 state.status = 'Error';

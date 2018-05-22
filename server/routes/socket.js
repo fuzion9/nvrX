@@ -15,9 +15,11 @@ module.exports = function (socket) {
     });
 
     socket.on('disconnect', function () {
+        log.info('Stopping all streams due to socket disconnect');
         for (let i = 0; i < runningStreams.length; i++){
-            log.info('Stopping ' + runningStreams[i] + ' due to socket disconnect');
+            log.info('Stopping ' + runningStreams[i]);
             socket.leave('STREAM_' + runningStreams[i]);
+            runningStreams = [];
             clearInterval(statsInterval);
         }
     });

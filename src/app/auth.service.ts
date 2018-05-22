@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {HttpClient} from "@angular/common/http";
 import {HttpHeaders} from '@angular/common/http';
+import {TimeInterval} from "rxjs/Rx";
 
 @Injectable()
 export class AuthService {
@@ -10,15 +11,16 @@ export class AuthService {
     loginStatus: BehaviorSubject<string> = new BehaviorSubject(null);
     secondsTillTokenExpires = 0;
     private _httpOptions = {headers: null};
+    private expireCheckInterval;
     get httpOptions(){
         let now = new Date();
         //console.log(now);
         let expires = new Date(this.user.expires);
         //console.log(expires);
-        let secondsTillTokenExpires = expires.getTime() - now.getTime(); // / 1000;
+        //let secondsTillTokenExpires = expires.getTime() - now.getTime(); // / 1000;
         //console.log('Token Expires in ' + AuthService.convertMillisToTime(secondsTillTokenExpires) + ' seconds. [' + secondsTillTokenExpires +']');
         if (now > expires) {
-            //console.log('Token Expired');
+            console.log('Token Expired');
             this.doLogout();
             return null;
         } else {
@@ -27,6 +29,10 @@ export class AuthService {
     }
 
     constructor(private http: HttpClient) {
+        this.checkUser();
+    }
+
+    checkUser(){
         this.readLocalStorage();
         if (this.user.jwt) {
             let now = new Date();
@@ -39,12 +45,19 @@ export class AuthService {
                     'Authorization': this.user.jwt
                 });
                 this.http.get('/api/getLatestUserData', this.httpOptions).subscribe((data: any) => {
-                    this.user.sortOrder = data.sortOrder;
+                        if (data.msLeft < 86400000) { //dont even run this if the time is longer than 10 days.
+                            console.log('You will be logged out in ' + Math.floor(data.msLeft / 1000) + ' seconds. [' + data.msLeft + ' ms]');
+                            this.expireCheckInterval = setTimeout(() => {
+                                console.log('Logout Initiated due to token expiry');
+                                this.doLogout();
+                            }, data.msLeft);
+                        }
+                        this.user.sortOrder = data.sortOrder;
                         this.isLoggedIn.next(true);
                     },
                     (err) => {
                         console.log(err);
-                        this.isLoggedIn.next(true);
+                        this.isLoggedIn.next(false);
                     })
             }
         }
@@ -57,19 +70,18 @@ export class AuthService {
 
     setUserDataFromLogin(data){
         this.user = data;
-        console.log(data);
     }
 
     doLogin(u, p) {
         this.http.post<any>('/loginAPI', {username: u, password: p}).subscribe(data => {
-                console.log('Login Successful');
                 this.setLocalStorage(data);
                 this._httpOptions.headers = new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': data.jwt
                 });
                 this.setUserDataFromLogin(data);
-                this.isLoggedIn.next(true);
+                //this.isLoggedIn.next(true);
+                this.checkUser();
             },
             response => {
                 if (response.status === 401) {
@@ -92,7 +104,6 @@ export class AuthService {
     }
 
     setLocalStorage(data) {
-        console.log(data);
         localStorage.setItem('id', data.id);
         localStorage.setItem('expires', data.expires);
         localStorage.setItem('tokenDate', data.tokenDate);
