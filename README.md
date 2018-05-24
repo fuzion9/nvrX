@@ -1,12 +1,17 @@
 # Nvrx
-A Network Video Recording system for almost all IP Cameras.  
+A Network Video Recording system for almost all IP Cameras.  This is heavily influenced by Shinobi https://github.com/ShinobiCCTV/Shinobi
+
+
+
 
 # Requirements
 * Linux/Windows
 * ffmpeg 3.4 or higher
 * MongoDB 3 or higher
 * nodejs 8.10.0 or higher
-* @angular/cli 1.7 or higher (globally installed: npm install @angular/cli@latest)
+* @angular/cli 1.7 or higher (globally installed: npm install @angular/cli@latest)  (This is working and tested with Angular 5.2.0, with the release of 6 there are some minor breaking changes with RxJS 6 which is used by Angular 6.  I will be working on native support for Angular 6 soon, but for now there is a backwards compatibily package available.  To install it use: npm install rxjs@6 rxjs-compat@6 --save)
+
+This is just me writing this, happy for any ideas/input/feedback/code improvements, etc.. etc..
 
 
 # Linux (Ubuntu) Installation and Configuration
@@ -76,9 +81,8 @@ A Network Video Recording system for almost all IP Cameras.
 
 # Todo
 
+* Build an installation script
 * Create UI For PTZ Configuration
-* Schedule Housekeeping Operations
-* Create user Manager
 * Fix a problem where things just stop working when token expires (2 hours).  Workaround, refresh the page.
 * Fix a problem where monitor (camera) is not visible after adding a new one.  Workaround, refresh page.
 * Fix a problem where some monitor configuration changes are not reflected in the UI.  Workaround, refresh page.
